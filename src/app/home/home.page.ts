@@ -29,6 +29,7 @@ import {
 })
 export class HomePage implements OnInit {
   animes: Anime[] = [];
+  customReviews: any[] = [];
   loading = false;
   searchQuery = '';
   photos: Photo[] = [];
@@ -48,6 +49,7 @@ export class HomePage implements OnInit {
     this.currentUser = this.authService.getCurrentUser();
     await this.loadAnimes();
     this.photos = this.cameraService.getPhotos();
+    this.loadCustomReviews();
   }
 
   async loadAnimes() {
@@ -100,6 +102,7 @@ export class HomePage implements OnInit {
 
   async onRefresh(event: any) {
     await this.loadAnimes();
+    this.loadCustomReviews();
     event.target.complete();
   }
 
@@ -195,5 +198,34 @@ export class HomePage implements OnInit {
   onLogout() {
     this.authService.logout();
     this.navCtrl.navigateRoot('/login');
+  }
+
+  goToAddReview() {
+    this.navCtrl.navigateForward('/add-review');
+  }
+
+  loadCustomReviews() {
+    try {
+      const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+      this.customReviews = reviews.sort((a: any, b: any) => 
+        new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+      );
+    } catch (error) {
+      console.error('Error cargando reseñas personalizadas:', error);
+      this.customReviews = [];
+    }
+  }
+
+  formatDate(dateString: string): string {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch (error) {
+      return 'Fecha no disponible';
+    }
   }
 }

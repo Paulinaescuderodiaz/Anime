@@ -1,0 +1,114 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Agregar Reseña</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form #reviewForm="ngForm" (ngSubmit)="onSubmit(reviewForm)">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Nueva Reseña</ion-card-title>
+        <ion-card-subtitle>Comparte tu opinión sobre un anime</ion-card-subtitle>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <!-- Título del Anime -->
+        <ion-item>
+          <ion-label position="stacked">Título del Anime *</ion-label>
+          <ion-input 
+            [(ngModel)]="animeTitle" 
+            name="animeTitle" 
+            required
+            placeholder="Ingresa el título del anime">
+          </ion-input>
+        </ion-item>
+
+        <!-- Subir Foto -->
+        <ion-item>
+          <ion-label position="stacked">Foto del Anime</ion-label>
+          <div class="photo-upload-section">
+            <div class="photo-preview" *ngIf="selectedPhoto">
+              <img [src]="selectedPhoto.webviewPath" alt="Foto seleccionada">
+              <ion-button 
+                fill="clear" 
+                color="danger" 
+                size="small"
+                (click)="removePhoto()">
+                <ion-icon name="trash"></ion-icon>
+              </ion-button>
+            </div>
+            <ion-button 
+              expand="block" 
+              fill="outline" 
+              (click)="selectPhoto()"
+              *ngIf="!selectedPhoto">
+              <ion-icon name="camera" slot="start"></ion-icon>
+              {{ selectedPhoto ? 'Cambiar Foto' : 'Subir Foto' }}
+            </ion-button>
+          </div>
+        </ion-item>
+
+        <!-- Calificación -->
+        <ion-item>
+          <ion-label position="stacked">Calificación *</ion-label>
+          <ion-range 
+            [(ngModel)]="rating" 
+            name="rating" 
+            min="1" 
+            max="5" 
+            step="1" 
+            snaps="true" 
+            color="warning">
+            <ion-icon name="star" slot="start"></ion-icon>
+            <ion-icon name="star" slot="end"></ion-icon>
+          </ion-range>
+          <div class="rating-display">
+            <span>{{ rating }}/5</span>
+            <div class="stars">
+              <ion-icon 
+                *ngFor="let star of getStarsArray(rating)" 
+                name="star" 
+                color="warning">
+              </ion-icon>
+            </div>
+          </div>
+        </ion-item>
+
+        <!-- Comentario -->
+        <ion-item>
+          <ion-label position="stacked">Comentario *</ion-label>
+          <ion-textarea 
+            [(ngModel)]="comment" 
+            name="comment" 
+            required
+            placeholder="Escribe tu reseña aquí..."
+            rows="4">
+          </ion-textarea>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Botones de acción -->
+    <div class="action-buttons">
+      <ion-button 
+        expand="block" 
+        type="submit" 
+        [disabled]="!reviewForm.valid || submitting">
+        <ion-icon name="checkmark" slot="start"></ion-icon>
+        {{ submitting ? 'Guardando...' : 'Guardar Reseña' }}
+      </ion-button>
+      
+      <ion-button 
+        expand="block" 
+        fill="outline" 
+        (click)="goBack()">
+        <ion-icon name="arrow-back" slot="start"></ion-icon>
+        Cancelar
+      </ion-button>
+    </div>
+  </form>
+</ion-content>
