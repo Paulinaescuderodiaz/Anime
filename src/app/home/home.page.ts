@@ -30,6 +30,7 @@ import {
 export class HomePage implements OnInit {
   animes: Anime[] = [];
   customReviews: any[] = [];
+  otherUsersReviews: any[] = [];
   loading = false;
   searchQuery = '';
   photos: Photo[] = [];
@@ -51,6 +52,7 @@ export class HomePage implements OnInit {
     await this.loadAnimes();
     this.photos = this.cameraService.getPhotos();
     this.loadCustomReviews();
+    this.loadOtherUsersReviews();
   }
 
   async loadAnimes() {
@@ -110,6 +112,7 @@ export class HomePage implements OnInit {
   async onRefresh(event: any) {
     await this.loadAnimes();
     this.loadCustomReviews();
+    this.loadOtherUsersReviews();
     event.target.complete();
   }
 
@@ -309,6 +312,87 @@ export class HomePage implements OnInit {
       console.error('Error cargando reseñas personalizadas:', error);
       this.customReviews = [];
     }
+  }
+
+  loadOtherUsersReviews() {
+    try {
+      const currentUser = this.authService.getCurrentUser();
+      if (!currentUser) {
+        this.otherUsersReviews = [];
+        return;
+      }
+      
+      // Obtener todas las reseñas de todos los usuarios
+      const allReviews: any[] = [];
+      
+      // Buscar todas las claves de reseñas en localStorage
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('reviews_') && key !== `reviews_${currentUser}`) {
+          const userReviews = JSON.parse(localStorage.getItem(key) || '[]');
+          allReviews.push(...userReviews);
+        }
+      }
+      
+      // Si no hay reseñas de otros usuarios, crear algunas de ejemplo para demostración
+      if (allReviews.length === 0) {
+        this.createSampleOtherReviews();
+        return;
+      }
+      
+      // Ordenar por fecha y limitar a 15 reseñas máximo
+      this.otherUsersReviews = allReviews
+        .sort((a: any, b: any) => 
+          new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+        )
+        .slice(0, 15); // Limitar a 15 reseñas máximo
+    } catch (error) {
+      console.error('Error cargando reseñas de otros usuarios:', error);
+      this.otherUsersReviews = [];
+    }
+  }
+
+  createSampleOtherReviews() {
+    // Crear reseñas de ejemplo de otros usuarios
+    const sampleReviews = [
+      {
+        id: Date.now() + 1,
+        animeTitle: 'Attack on Titan',
+        calificacion: 5,
+        comentario: 'Una obra maestra del anime. La historia es increíble y la animación es espectacular.',
+        userEmail: 'anime.fan@example.com',
+        fecha: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+      },
+      {
+        id: Date.now() + 2,
+        animeTitle: 'Demon Slayer',
+        calificacion: 4,
+        comentario: 'Muy buena animación y personajes interesantes. La historia es emocionante.',
+        userEmail: 'otaku.master@example.com',
+        fecha: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+      },
+      {
+        id: Date.now() + 3,
+        animeTitle: 'One Piece',
+        calificacion: 5,
+        comentario: 'El mejor anime de aventuras. Luffy y su tripulación son increíbles.',
+        userEmail: 'pirate.king@example.com',
+        fecha: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+      }
+    ];
+    
+    this.otherUsersReviews = sampleReviews;
+  }
+
+  async refreshOtherReviews() {
+    this.loadOtherUsersReviews();
+    const toast = await this.toastCtrl.create({
+      message: 'Reseñas actualizadas',
+      duration: 1500,
+      color: 'success',
+      position: 'bottom'
+    });
+    await toast.present();
   }
 
   formatDate(dateString: string): string {
