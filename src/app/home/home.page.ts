@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, ToastController, ActionSheetController } from '@ionic/angular';
+import { NavController, ToastController, ActionSheetController, AlertController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../services/auth.service';
@@ -42,7 +42,8 @@ export class HomePage implements OnInit {
     private cameraService: CameraService,
     private databaseService: DatabaseService,
     private toastCtrl: ToastController,
-    private actionSheetCtrl: ActionSheetController
+    private actionSheetCtrl: ActionSheetController,
+    private alertCtrl: AlertController
   ) {}
 
   async ngOnInit() {
@@ -202,6 +203,73 @@ export class HomePage implements OnInit {
 
   goToAddReview() {
     this.navCtrl.navigateForward('/add-review');
+  }
+
+  goToMyReviews() {
+    this.navCtrl.navigateForward('/my-reviews');
+  }
+
+  editReview(review: any) {
+    // Por ahora, navegamos a la página de agregar reseña
+    // En el futuro se puede crear una página de edición específica
+    this.navCtrl.navigateForward('/add-review');
+  }
+
+  async deleteReview(review: any) {
+    const alert = await this.alertCtrl.create({
+      header: 'Confirmar eliminación',
+      message: `¿Estás seguro de que quieres eliminar la reseña de "${review.animeTitle}"?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => {
+            this.performDelete(review);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async performDelete(review: any) {
+    try {
+      // Obtener reseñas actuales
+      const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+      
+      // Filtrar la reseña a eliminar
+      const updatedReviews = reviews.filter((r: any) => r.id !== review.id);
+      
+      // Actualizar localStorage
+      localStorage.setItem('reviews', JSON.stringify(updatedReviews));
+      
+      // Recargar las reseñas en la página
+      this.loadCustomReviews();
+      
+      // Mostrar mensaje de éxito
+      const toast = await this.toastCtrl.create({
+        message: 'Reseña eliminada exitosamente',
+        duration: 2000,
+        color: 'success',
+        position: 'bottom'
+      });
+      await toast.present();
+      
+    } catch (error) {
+      console.error('Error eliminando reseña:', error);
+      const toast = await this.toastCtrl.create({
+        message: 'Error al eliminar la reseña',
+        duration: 2000,
+        color: 'danger',
+        position: 'bottom'
+      });
+      await toast.present();
+    }
   }
 
   loadCustomReviews() {

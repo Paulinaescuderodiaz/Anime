@@ -18,6 +18,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'my-reviews',
+    loadComponent: () => import('./my-reviews/my-reviews.page').then((m) => m.MyReviewsPage),
+    canActivate: [authGuard]
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',

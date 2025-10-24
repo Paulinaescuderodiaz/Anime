@@ -82,40 +82,71 @@
 
       <!-- Sección de Mis Reseñas -->
       <div class="reviews-section" *ngIf="customReviews.length > 0">
-        <h2 class="section-title">Mis Reseñas</h2>
-        <div class="reviews-grid">
-          <ion-card class="review-card" *ngFor="let review of customReviews">
-            <div class="card-image" *ngIf="review.photo">
-              <img [src]="review.photo.webviewPath" [alt]="review.animeTitle">
-              <div class="rating-overlay">
-                <div class="stars">
-                  <ion-icon 
-                    *ngFor="let star of getStarsArray(review.calificacion)" 
-                    name="star" 
-                    color="warning">
-                  </ion-icon>
-                </div>
-                <span class="rating-number">{{ review.calificacion }}/5</span>
-              </div>
-            </div>
-            
-            <div class="card-content">
-              <h3 class="anime-title">{{ review.animeTitle }}</h3>
-              
-              <div class="review-meta">
-                <span class="review-date">{{ formatDate(review.fecha) }}</span>
-                <div class="stars-inline">
-                  <ion-icon 
-                    *ngFor="let star of getStarsArray(review.calificacion)" 
-                    name="star" 
-                    color="warning">
-                  </ion-icon>
+        <div class="section-header">
+          <h2 class="section-title">Mis Reseñas</h2>
+          <ion-button 
+            fill="clear" 
+            size="small" 
+            color="primary"
+            (click)="goToMyReviews()">
+            <ion-icon name="create" slot="start"></ion-icon>
+            Gestionar
+          </ion-button>
+        </div>
+        
+        <div class="reviews-slider" *ngIf="customReviews.length > 0">
+          <div class="slider-container">
+            <ion-card class="review-card" *ngFor="let review of customReviews">
+              <div class="card-image" *ngIf="review.photo">
+                <img [src]="review.photo.webviewPath" [alt]="review.animeTitle">
+                <div class="rating-overlay">
+                  <div class="stars">
+                    <ion-icon 
+                      *ngFor="let star of getStarsArray(review.calificacion)" 
+                      name="star" 
+                      color="warning">
+                    </ion-icon>
+                  </div>
+                  <span class="rating-number">{{ review.calificacion }}/5</span>
                 </div>
               </div>
               
-              <p class="review-comment">{{ review.comentario }}</p>
-            </div>
-          </ion-card>
+              <div class="card-content">
+                <div class="review-header">
+                  <h3 class="anime-title">{{ review.animeTitle }}</h3>
+                  <div class="review-actions">
+                    <button 
+                      type="button"
+                      class="edit-btn"
+                      (click)="editReview(review)"
+                      style="background: blue; color: white; border: none; padding: 8px; margin: 2px; border-radius: 4px;">
+                      ✏️
+                    </button>
+                    <button 
+                      type="button"
+                      class="delete-btn"
+                      (click)="deleteReview(review)"
+                      style="background: red; color: white; border: none; padding: 8px; margin: 2px; border-radius: 4px;">
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="review-meta">
+                  <span class="review-date">{{ formatDate(review.fecha) }}</span>
+                  <div class="stars-inline">
+                    <ion-icon 
+                      *ngFor="let star of getStarsArray(review.calificacion)" 
+                      name="star" 
+                      color="warning">
+                    </ion-icon>
+                  </div>
+                </div>
+                
+                <p class="review-comment">{{ review.comentario }}</p>
+              </div>
+            </ion-card>
+          </div>
         </div>
       </div>
 

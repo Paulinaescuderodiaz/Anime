@@ -133,11 +133,36 @@ ion-card img {
 .reviews-section {
   margin-bottom: 30px;
   
-  .reviews-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 15px;
-    margin-top: 15px;
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    
+    .section-title {
+      margin: 0;
+    }
+  }
+  
+  .reviews-slider {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 0 10px;
+    
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .slider-container {
+      display: flex;
+      gap: 15px;
+      padding: 0 0 10px 0;
+      width: max-content;
+      min-width: 100%;
+    }
   }
   
   .review-card {
@@ -145,6 +170,8 @@ ion-card img {
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
+    flex: 0 0 280px; // Ancho fijo para el slider
+    max-width: 280px;
     
     &:hover {
       transform: translateY(-2px);
@@ -196,6 +223,52 @@ ion-card img {
     
     .card-content {
       padding: 15px;
+      
+      .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        
+        .anime-title {
+          font-size: 18px;
+          font-weight: bold;
+          margin: 0;
+          color: var(--ion-color-primary);
+          flex: 1;
+          margin-right: 10px;
+        }
+        
+        .review-actions {
+          display: flex;
+          gap: 5px;
+          flex-shrink: 0;
+          
+          ion-button {
+            --padding-start: 8px;
+            --padding-end: 8px;
+            --padding-top: 8px;
+            --padding-bottom: 8px;
+            min-width: 40px;
+            height: 40px;
+            margin: 0;
+            
+            ion-icon {
+              font-size: 16px;
+            }
+          }
+          
+          .edit-btn {
+            --color: var(--ion-color-primary);
+            --background: transparent;
+          }
+          
+          .delete-btn {
+            --color: var(--ion-color-danger);
+            --background: transparent;
+          }
+        }
+      }
       
       .anime-title {
         font-size: 18px;

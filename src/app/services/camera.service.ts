@@ -19,6 +19,11 @@ export class CameraService {
   // Tomar una foto usando la cámara
   async takePicture(): Promise<Photo> {
     try {
+      // Verificar si estamos en un navegador web
+      if (this.isWebPlatform()) {
+        return await this.selectFromGalleryWeb(); // En web, usar selección de archivo
+      }
+
       const image = await Camera.getPhoto({
         quality: 90,
         allowEditing: true,
@@ -39,6 +44,11 @@ export class CameraService {
   // Seleccionar imagen de la galería
   async selectFromGallery(): Promise<Photo> {
     try {
+      // Verificar si estamos en un navegador web
+      if (this.isWebPlatform()) {
+        return await this.selectFromGalleryWeb();
+      }
+
       const image = await Camera.getPhoto({
         quality: 90,
         allowEditing: true,
@@ -54,6 +64,57 @@ export class CameraService {
       console.error('Error seleccionando imagen:', error);
       throw error;
     }
+  }
+
+  // Método para navegadores web
+  private async selectFromGalleryWeb(): Promise<Photo> {
+    return new Promise((resolve, reject) => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      
+      input.onchange = async (event: any) => {
+        const file = event.target.files[0];
+        if (file) {
+          try {
+            const base64 = await this.convertFileToBase64(file);
+            const photo: Photo = {
+              filepath: `web_${Date.now()}.jpg`,
+              webviewPath: base64,
+              data: base64
+            };
+            
+            this.photos.unshift(photo);
+            resolve(photo);
+          } catch (error) {
+            reject(error);
+          }
+        } else {
+          reject(new Error('No se seleccionó ningún archivo'));
+        }
+      };
+      
+      input.oncancel = () => {
+        reject(new Error('Selección cancelada'));
+      };
+      
+      input.click();
+    });
+  }
+
+  // Convertir archivo a base64
+  private convertFileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Verificar si estamos en navegador web
+  private isWebPlatform(): boolean {
+    return !!(window as any).Capacitor && (window as any).Capacitor.isNativePlatform === false;
   }
 
   // Guardar la imagen en el sistema de archivos
