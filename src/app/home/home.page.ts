@@ -239,14 +239,20 @@ export class HomePage implements OnInit {
 
   async performDelete(review: any) {
     try {
-      // Obtener reseñas actuales
-      const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+      const currentUser = this.authService.getCurrentUser();
+      if (!currentUser) {
+        this.showToast('Usuario no autenticado', 'danger');
+        return;
+      }
+      
+      // Obtener reseñas del usuario actual
+      const reviews = JSON.parse(localStorage.getItem(`reviews_${currentUser}`) || '[]');
       
       // Filtrar la reseña a eliminar
       const updatedReviews = reviews.filter((r: any) => r.id !== review.id);
       
-      // Actualizar localStorage
-      localStorage.setItem('reviews', JSON.stringify(updatedReviews));
+      // Actualizar localStorage del usuario
+      localStorage.setItem(`reviews_${currentUser}`, JSON.stringify(updatedReviews));
       
       // Recargar las reseñas en la página
       this.loadCustomReviews();
@@ -274,7 +280,13 @@ export class HomePage implements OnInit {
 
   loadCustomReviews() {
     try {
-      const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+      const currentUser = this.authService.getCurrentUser();
+      if (!currentUser) {
+        this.customReviews = [];
+        return;
+      }
+      
+      const reviews = JSON.parse(localStorage.getItem(`reviews_${currentUser}`) || '[]');
       this.customReviews = reviews.sort((a: any, b: any) => 
         new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
       );

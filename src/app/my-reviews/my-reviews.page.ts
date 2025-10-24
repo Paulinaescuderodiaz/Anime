@@ -32,7 +32,14 @@ export class MyReviewsPage implements OnInit {
 
   loadReviews() {
     try {
-      const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+      // Obtener el usuario actual del localStorage
+      const currentUser = localStorage.getItem('currentUser');
+      if (!currentUser) {
+        this.reviews = [];
+        return;
+      }
+      
+      const reviews = JSON.parse(localStorage.getItem(`reviews_${currentUser}`) || '[]');
       this.reviews = reviews.sort((a: any, b: any) => 
         new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
       );
@@ -97,11 +104,23 @@ export class MyReviewsPage implements OnInit {
 
   async performDelete(review: any, index: number) {
     try {
+      const currentUser = localStorage.getItem('currentUser');
+      if (!currentUser) {
+        const toast = await this.toastCtrl.create({
+          message: 'Usuario no autenticado',
+          duration: 2000,
+          color: 'danger',
+          position: 'bottom'
+        });
+        await toast.present();
+        return;
+      }
+      
       // Eliminar de la lista local
       this.reviews.splice(index, 1);
       
-      // Actualizar localStorage
-      localStorage.setItem('reviews', JSON.stringify(this.reviews));
+      // Actualizar localStorage del usuario específico
+      localStorage.setItem(`reviews_${currentUser}`, JSON.stringify(this.reviews));
       
       // Mostrar mensaje de éxito
       const toast = await this.toastCtrl.create({

@@ -134,17 +134,18 @@ export class AddReviewPage implements OnInit {
         calificacion: this.rating,
         comentario: this.comment,
         animeTitle: this.animeTitle, // Agregar el título del anime
-        photo: this.selectedPhoto // Agregar la foto si existe
+        photo: this.selectedPhoto, // Agregar la foto si existe
+        userEmail: currentUser // Agregar el email del usuario
       };
 
-      // Por ahora, guardamos en localStorage ya que no tenemos una API real
-      const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
-      reviews.push({
+      // Guardar reseñas asociadas al usuario específico
+      const userReviews = JSON.parse(localStorage.getItem(`reviews_${currentUser}`) || '[]');
+      userReviews.push({
         ...reviewData,
         id: Date.now(),
         fecha: new Date().toISOString()
       });
-      localStorage.setItem('reviews', JSON.stringify(reviews));
+      localStorage.setItem(`reviews_${currentUser}`, JSON.stringify(userReviews));
 
       this.showToast('Reseña agregada exitosamente', 'success');
       this.navCtrl.navigateBack('/home');
