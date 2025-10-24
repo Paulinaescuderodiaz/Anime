@@ -48,7 +48,7 @@ export class LoginPage {
     }
 
     const { email, password } = this.loginForm.value;
-    const success = this.authService.login(email, password);
+    const success = await this.authService.login(email, password);
 
     if (success) {
       const toast = await this.toastCtrl.create({

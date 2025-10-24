@@ -45,7 +45,7 @@ export class RegisterPage {
     }
 
     const { email, password } = this.registerForm.value;
-    const success = this.authService.register(email, password);
+    const success = await this.authService.register(email, password);
 
     if (success) {
       const toast = await this.toastCtrl.create({

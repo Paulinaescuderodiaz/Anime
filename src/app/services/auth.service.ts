@@ -1,44 +1,50 @@
 import { Injectable } from '@angular/core';
+import { DatabaseService } from './database';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private users: { email: string; password: string }[] = [];
   private currentUser: string | null = null;
 
-  constructor() {
-    const storedUsers = localStorage.getItem('users');
-    if (storedUsers) {
-      this.users = JSON.parse(storedUsers);
-    }
-
+  constructor(private databaseService: DatabaseService) {
+    // Verificar si hay sesión activa
     const storedSession = localStorage.getItem('currentUser');
     if (storedSession) {
       this.currentUser = storedSession;
     }
   }
 
-  private saveUsersToLocalStorage() {
-    localStorage.setItem('users', JSON.stringify(this.users));
-  }
+  async register(email: string, password: string, nombre?: string): Promise<boolean> {
+    try {
+      // Verificar si el usuario ya existe
+      const existingUser = await this.databaseService.login(email, password);
+      if (existingUser) {
+        return false; // Usuario ya existe
+      }
 
-  register(email: string, password: string): boolean {
-    const exists = this.users.find(user => user.email === email);
-    if (exists) return false;
-
-    this.users.push({ email, password });
-    this.saveUsersToLocalStorage();
-    return true;
-  }
-
-  login(email: string, password: string): boolean {
-    const found = this.users.some(user => user.email === email && user.password === password);
-    if (found) {
-      this.currentUser = email;
-      localStorage.setItem('currentUser', email);
+      // Registrar nuevo usuario
+      await this.databaseService.registrarUsuario(nombre || email, email, password);
+      return true;
+    } catch (error) {
+      console.error('Error registrando usuario:', error);
+      return false;
     }
-    return found;
+  }
+
+  async login(email: string, password: string): Promise<boolean> {
+    try {
+      const user = await this.databaseService.login(email, password);
+      if (user) {
+        this.currentUser = email;
+        localStorage.setItem('currentUser', email);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error en login:', error);
+      return false;
+    }
   }
 
   logout() {

@@ -1,27 +1,42 @@
 <ion-content>
   <ion-menu contentId="main-content">
     <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        
+        <ion-title class="app-title">NekoRate</ion-title>
+        
+        <div slot="end" class="user-section">
+          <ion-avatar class="user-avatar">
+            <img alt="Avatar del usuario" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+          </ion-avatar>
+          <ion-label class="user-name">{{ currentUser }}</ion-label>
+        </div>
+      </ion-toolbar>
+      
+      <!-- Barra de búsqueda en toolbar separado -->
+      <ion-toolbar class="search-toolbar">
+        <ion-searchbar 
+          placeholder="Buscar anime..." 
+          class="custom-searchbar"
+          [(ngModel)]="searchQuery"
+          (ionInput)="searchAnimes()">
+        </ion-searchbar>
+      </ion-toolbar>
+    </ion-header>
     
-    <ion-title class="app-title">NekoRate</ion-title>
-    
-    <div slot="end" class="user-section">
-      <ion-avatar class="user-avatar">
-        <img alt="Avatar del usuario" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
-      </ion-avatar>
-      <ion-label class="user-name">Nombre Usuario</ion-label>
-    </div>
-  </ion-toolbar>
-  
-  <!-- Barra de búsqueda en toolbar separado -->
-  <ion-toolbar class="search-toolbar">
-    <ion-searchbar placeholder="Buscar anime..." class="custom-searchbar"></ion-searchbar>
-  </ion-toolbar>
-</ion-header>
     <ion-content class="ion-padding">
+      <ion-button expand="block" (click)="presentActionSheet()">
+        <ion-icon name="camera" slot="start"></ion-icon>
+        Tomar Foto
+      </ion-button>
+      
+      <ion-button expand="block" fill="outline" (click)="onLogout()">
+        <ion-icon name="log-out" slot="start"></ion-icon>
+        Cerrar Sesión
+      </ion-button>
     </ion-content>
   </ion-menu>
 
@@ -32,85 +47,85 @@
           <ion-menu-button></ion-menu-button>
         </ion-buttons>
         <ion-title class="menu">NekoRate</ion-title>
-        <ion-avatar slot="start" class="contenedor">
+        <ion-avatar slot="end" class="contenedor">
           <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" class="avatar" />
         </ion-avatar>
-        <ion-searchbar slot="end" placeholder="Buscador"></ion-searchbar>
-        <ion-label>Nombre Usuario</ion-label>
       </ion-toolbar>
     </ion-header>
 
     <ion-content class="ion-padding">
-  <div class="reviews-section">
-    <h2 class="section-title">Últimas Reseñas</h2>
-    
-    <ion-card class="review-card">
-      <div class="card-image">
-        <img src="assets/img/4.png" alt="Wotaku ni Koi wa Muzukashii">
-        <div class="rating-overlay">
-          <ion-icon name="star"></ion-icon>
-          <span>8.5</span>
-        </div>
-      </div>
-      
-      <div class="card-content">
-        <div class="categories">
-          <ion-chip color="primary" size="small">COMEDIA</ion-chip>
-          <ion-chip color="secondary" size="small">ROMANCE</ion-chip>
-        </div>
-        
-        <h3 class="anime-title">Wotaku ni Koi wa Muzukashii</h3>
-        
-        <div class="meta-info">
-          <span class="date">25 septiembre, 2021</span>
-          <span class="comments">4 comentarios</span>
-        </div>
-        
-        <p class="description">
-          ¡Hola a todos y bienvenidos! Hoy es el turno de uno de los animes de comedia romántica que más me han gustado. Por lo general soy mucho más fan del drama que de la comedia...
-        </p>
-        
-        <ion-button fill="clear" class="read-more-btn">
-          Sigue leyendo
-          <ion-icon name="arrow-forward" slot="end"></ion-icon>
-        </ion-button>
-      </div>
-    </ion-card>
+      <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+      </ion-refresher>
 
-    <ion-card class="review-card">
-      <div class="card-image">
-        <img src="assets/img/4.png" alt="Attack on Titan">
-        <div class="rating-overlay">
-          <ion-icon name="star"></ion-icon>
-          <span>9.2</span>
+      <!-- Sección de Fotos -->
+      <div class="photos-section" *ngIf="photos.length > 0">
+        <h2 class="section-title">Mis Fotos</h2>
+        <div class="photos-grid">
+          <div class="photo-item" *ngFor="let photo of photos">
+            <img [src]="photo.webviewPath" alt="Foto capturada">
+            <ion-button 
+              fill="clear" 
+              color="danger" 
+              size="small"
+              (click)="deletePhoto(photo)">
+              <ion-icon name="trash"></ion-icon>
+            </ion-button>
+          </div>
         </div>
       </div>
-      
-      <div class="card-content">
-        <div class="categories">
-          <ion-chip color="tertiary" size="small">ACCIÓN</ion-chip>
-          <ion-chip color="primary" size="small">DRAMA</ion-chip>
-        </div>
-        
-        <h3 class="anime-title">Attack on Titan</h3>
-        
-        <div class="meta-info">
-          <span class="date">20 septiembre, 2021</span>
-          <span class="comments">8 comentarios</span>
-        </div>
-        
-        <p class="description">
-          Una de las series más populares y controvertidas de los últimos años. Attack on Titan nos presenta un mundo donde la humanidad vive encerrada tras murallas...
-        </p>
-        
-        <ion-button fill="clear" class="read-more-btn">
-          Sigue leyendo
-          <ion-icon name="arrow-forward" slot="end"></ion-icon>
-        </ion-button>
-      </div>
-    </ion-card>
-  </div>
-</ion-content>
 
+      <!-- Sección de Animes -->
+      <div class="animes-section">
+        <h2 class="section-title">Animes Populares</h2>
+        
+        <div *ngIf="loading" class="loading-container">
+          <ion-spinner name="crescent"></ion-spinner>
+          <p>Cargando animes...</p>
+        </div>
+
+        <div *ngIf="!loading && animes.length === 0" class="no-results">
+          <ion-icon name="sad-outline" size="large"></ion-icon>
+          <p>No se encontraron animes</p>
+        </div>
+
+        <ion-card class="anime-card" *ngFor="let anime of animes">
+          <div class="card-image">
+            <img [src]="anime.image" [alt]="anime.title" *ngIf="anime.image">
+            <div class="rating-overlay" *ngIf="anime.rating">
+              <ion-icon name="star"></ion-icon>
+              <span>{{ anime.rating | number:'1.1-1' }}</span>
+            </div>
+          </div>
+          
+          <div class="card-content">
+            <div class="categories" *ngIf="anime.genres && anime.genres.length > 0">
+              <ion-chip 
+                *ngFor="let genre of anime.genres.slice(0, 2)" 
+                color="primary" 
+                size="small">
+                {{ genre.toUpperCase() }}
+              </ion-chip>
+            </div>
+            
+            <h3 class="anime-title">{{ anime.title }}</h3>
+            
+            <div class="meta-info" *ngIf="anime.year">
+              <span class="year">{{ anime.year }}</span>
+              <span class="status" *ngIf="anime.status">{{ anime.status }}</span>
+            </div>
+            
+            <p class="description" *ngIf="anime.description">
+              {{ anime.description | slice:0:150 }}{{ (anime.description && anime.description.length > 150) ? '...' : '' }}
+            </p>
+            
+            <ion-button fill="clear" class="read-more-btn">
+              Ver detalles
+              <ion-icon name="arrow-forward" slot="end"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-card>
+      </div>
+    </ion-content>
   </div>
 </ion-content>
