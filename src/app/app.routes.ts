@@ -8,6 +8,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'anime-detail/:id',
+    loadComponent: () => import('./anime-detail/anime-detail.page').then((m) => m.AnimeDetailPage),
+    canActivate: [authGuard]
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',

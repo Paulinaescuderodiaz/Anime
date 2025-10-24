@@ -89,7 +89,7 @@
           <p>No se encontraron animes</p>
         </div>
 
-        <ion-card class="anime-card" *ngFor="let anime of animes">
+        <ion-card class="anime-card" *ngFor="let anime of animes" (click)="goToAnimeDetail(anime.id)">
           <div class="card-image">
             <img [src]="anime.image" [alt]="anime.title" *ngIf="anime.image">
             <div class="rating-overlay" *ngIf="anime.rating">

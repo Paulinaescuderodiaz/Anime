@@ -111,7 +111,7 @@ export class DatabaseService {
   async obtenerReseñas(animeId: number) {
     if (!this.db) return [];
     const res = await this.db.executeSql(
-      `SELECT r.*, u.nombre FROM reseñas r JOIN usuarios u ON r.usuarioId = u.id WHERE animeId = ?`,
+      `SELECT r.*, u.nombre FROM reseñas r JOIN usuarios u ON r.usuarioId = u.id WHERE animeId = ? ORDER BY r.id DESC`,
       [animeId]
     );
     const reseñas = [];
@@ -119,5 +119,52 @@ export class DatabaseService {
       reseñas.push(res.rows.item(i));
     }
     return reseñas;
+  }
+
+  async obtenerReseñasPorUsuario(usuarioId: number) {
+    if (!this.db) return [];
+    const res = await this.db.executeSql(
+      `SELECT r.*, a.titulo as animeTitulo FROM reseñas r JOIN animes a ON r.animeId = a.id WHERE usuarioId = ? ORDER BY r.id DESC`,
+      [usuarioId]
+    );
+    const reseñas = [];
+    for (let i = 0; i < res.rows.length; i++) {
+      reseñas.push(res.rows.item(i));
+    }
+    return reseñas;
+  }
+
+  async actualizarReseña(reseñaId: number, datos: any) {
+    if (!this.db) return;
+    await this.db.executeSql(
+      `UPDATE reseñas SET calificacion = ?, comentario = ? WHERE id = ?`,
+      [datos.calificacion, datos.comentario, reseñaId]
+    );
+  }
+
+  async eliminarReseña(reseñaId: number) {
+    if (!this.db) return;
+    await this.db.executeSql(
+      `DELETE FROM reseñas WHERE id = ?`,
+      [reseñaId]
+    );
+  }
+
+  async obtenerCalificacionPromedio(animeId: number) {
+    if (!this.db) return 0;
+    const res = await this.db.executeSql(
+      `SELECT AVG(calificacion) as promedio FROM reseñas WHERE animeId = ?`,
+      [animeId]
+    );
+    return res.rows.length > 0 ? res.rows.item(0).promedio || 0 : 0;
+  }
+
+  async usuarioYaReseño(usuarioId: number, animeId: number) {
+    if (!this.db) return false;
+    const res = await this.db.executeSql(
+      `SELECT COUNT(*) as count FROM reseñas WHERE usuarioId = ? AND animeId = ?`,
+      [usuarioId, animeId]
+    );
+    return res.rows.length > 0 ? res.rows.item(0).count > 0 : false;
   }
 }

@@ -173,6 +173,10 @@ export class HomePage implements OnInit {
     this.photos = this.cameraService.getPhotos();
   }
 
+  goToAnimeDetail(animeId: number) {
+    this.navCtrl.navigateForward(`/anime-detail/${animeId}`);
+  }
+
   onLogout() {
     this.authService.logout();
     this.navCtrl.navigateRoot('/login');

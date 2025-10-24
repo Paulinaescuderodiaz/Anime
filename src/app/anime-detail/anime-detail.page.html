@@ -1,0 +1,170 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ anime?.title || 'Detalles del Anime' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando detalles...</p>
+  </div>
+
+  <!-- Anime Details -->
+  <div *ngIf="!loading && anime" class="anime-details">
+    <!-- Anime Header Card -->
+    <ion-card class="anime-header-card">
+      <div class="anime-image-container">
+        <img [src]="anime.image" [alt]="anime.title" *ngIf="anime.image">
+        <div class="rating-overlay" *ngIf="averageRating > 0">
+          <ion-icon name="star"></ion-icon>
+          <span>{{ averageRating | number:'1.1-1' }}</span>
+        </div>
+      </div>
+      
+      <ion-card-header>
+        <ion-card-title class="anime-title">{{ anime.title }}</ion-card-title>
+        <div class="anime-meta">
+          <ion-chip *ngIf="anime.year" color="primary" size="small">
+            {{ anime.year }}
+          </ion-chip>
+          <ion-chip *ngIf="anime.status" color="secondary" size="small">
+            {{ anime.status }}
+          </ion-chip>
+          <ion-chip *ngIf="anime.genres && anime.genres.length > 0" color="tertiary" size="small">
+            {{ anime.genres[0] }}
+          </ion-chip>
+        </div>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <p class="anime-description" *ngIf="anime.description">
+          {{ anime.description }}
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- User Review Section -->
+    <ion-card class="review-form-card" *ngIf="currentUser">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="star" color="warning"></ion-icon>
+          {{ hasUserReviewed ? 'Editar Mi Reseña' : 'Escribir Reseña' }}
+        </ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <form [formGroup]="reviewForm" (ngSubmit)="submitReview()">
+          <!-- Star Rating -->
+          <div class="star-rating-container">
+            <label class="rating-label">Calificación:</label>
+            <div class="star-rating">
+              <ion-icon 
+                *ngFor="let star of getStarsArray(5); let i = index"
+                [name]="i < reviewForm.get('calificacion')?.value ? 'star' : 'star-outline'"
+                [color]="i < reviewForm.get('calificacion')?.value ? 'warning' : 'medium'"
+                (click)="setRating(i + 1)"
+                class="star-icon">
+              </ion-icon>
+              <span class="rating-text">
+                {{ reviewForm.get('calificacion')?.value || 0 }}/5
+              </span>
+            </div>
+          </div>
+
+          <!-- Comment Textarea -->
+          <ion-item class="comment-item">
+            <ion-label position="stacked">Comentario:</ion-label>
+            <ion-textarea
+              formControlName="comentario"
+              placeholder="Escribe tu reseña aquí..."
+              rows="4"
+              maxlength="500">
+            </ion-textarea>
+          </ion-item>
+
+          <!-- Action Buttons -->
+          <div class="form-actions">
+            <ion-button 
+              type="submit" 
+              expand="block" 
+              [disabled]="reviewForm.invalid"
+              color="primary">
+              <ion-icon name="checkmark" slot="start"></ion-icon>
+              {{ hasUserReviewed ? 'Actualizar Reseña' : 'Publicar Reseña' }}
+            </ion-button>
+            
+            <ion-button 
+              *ngIf="hasUserReviewed"
+              expand="block" 
+              fill="outline" 
+              color="danger"
+              (click)="deleteReview()">
+              <ion-icon name="trash" slot="start"></ion-icon>
+              Eliminar Reseña
+            </ion-button>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Reviews List -->
+    <ion-card class="reviews-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="chatbubbles" color="primary"></ion-icon>
+          Reseñas ({{ reviews.length }})
+        </ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <div *ngIf="reviews.length === 0" class="no-reviews">
+          <ion-icon name="chatbubbles-outline" size="large" color="medium"></ion-icon>
+          <p>No hay reseñas aún. ¡Sé el primero en reseñar!</p>
+        </div>
+
+        <div *ngFor="let review of reviews" class="review-item">
+          <div class="review-header">
+            <ion-avatar class="review-avatar">
+              <img [src]="'https://ionicframework.com/docs/img/demos/avatar.svg'" [alt]="review.nombreUsuario">
+            </ion-avatar>
+            <div class="review-info">
+              <h4 class="review-author">{{ review.nombreUsuario || 'Usuario' }}</h4>
+              <div class="review-rating">
+                <ion-icon 
+                  *ngFor="let star of getStarsArray(review.calificacion)"
+                  name="star" 
+                  color="warning" 
+                  size="small">
+                </ion-icon>
+                <span class="rating-number">{{ review.calificacion }}/5</span>
+              </div>
+            </div>
+            <ion-note class="review-date">
+              {{ review.fecha | date:'short' }}
+            </ion-note>
+          </div>
+          
+          <div class="review-content">
+            <p>{{ review.comentario }}</p>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- No Anime Found -->
+  <div *ngIf="!loading && !anime" class="no-anime">
+    <ion-icon name="sad-outline" size="large" color="medium"></ion-icon>
+    <h2>Anime no encontrado</h2>
+    <p>No se pudo cargar la información del anime.</p>
+    <ion-button (click)="goBack()" fill="outline">
+      <ion-icon name="arrow-back" slot="start"></ion-icon>
+      Volver
+    </ion-button>
+  </div>
+</ion-content>

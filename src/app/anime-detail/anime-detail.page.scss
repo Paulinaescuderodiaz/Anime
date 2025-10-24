@@ -1,0 +1,315 @@
+// Loading container
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: var(--ion-color-medium);
+  
+  ion-spinner {
+    margin-bottom: 15px;
+  }
+}
+
+// Anime details
+.anime-details {
+  .anime-header-card {
+    margin-bottom: 20px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    
+    .anime-image-container {
+      position: relative;
+      height: 300px;
+      overflow: hidden;
+      
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .rating-overlay {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-weight: bold;
+        font-size: 14px;
+        
+        ion-icon {
+          color: #ffd700;
+        }
+      }
+    }
+    
+    .anime-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: var(--ion-color-dark);
+    }
+    
+    .anime-meta {
+      margin-bottom: 15px;
+      
+      ion-chip {
+        margin-right: 8px;
+        margin-bottom: 5px;
+      }
+    }
+    
+    .anime-description {
+      color: var(--ion-color-medium);
+      line-height: 1.6;
+      font-size: 16px;
+    }
+  }
+}
+
+// Review form card
+.review-form-card {
+  margin-bottom: 20px;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  ion-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    
+    ion-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  }
+  
+  .star-rating-container {
+    margin-bottom: 20px;
+    
+    .rating-label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: var(--ion-color-dark);
+    }
+    
+    .star-rating {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      
+      .star-icon {
+        font-size: 24px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+      
+      .rating-text {
+        margin-left: 10px;
+        font-weight: bold;
+        color: var(--ion-color-primary);
+      }
+    }
+  }
+  
+  .comment-item {
+    --background: transparent;
+    --border-radius: 10px;
+    margin-bottom: 20px;
+    
+    ion-label {
+      font-weight: bold;
+      color: var(--ion-color-dark);
+    }
+    
+    ion-textarea {
+      --background: var(--ion-color-light);
+      --border-radius: 10px;
+      --padding-start: 12px;
+      --padding-end: 12px;
+      --padding-top: 12px;
+      --padding-bottom: 12px;
+    }
+  }
+  
+  .form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    
+    ion-button {
+      --border-radius: 10px;
+      font-weight: bold;
+    }
+  }
+}
+
+// Reviews card
+.reviews-card {
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  ion-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    
+    ion-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  }
+  
+  .no-reviews {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--ion-color-medium);
+    
+    ion-icon {
+      margin-bottom: 15px;
+    }
+    
+    p {
+      font-size: 16px;
+    }
+  }
+  
+  .review-item {
+    border-bottom: 1px solid var(--ion-color-light);
+    padding: 15px 0;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    .review-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      
+      .review-avatar {
+        width: 40px;
+        height: 40px;
+        margin-right: 12px;
+        
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+      
+      .review-info {
+        flex: 1;
+        
+        .review-author {
+          margin: 0 0 5px 0;
+          font-size: 16px;
+          font-weight: bold;
+          color: var(--ion-color-dark);
+        }
+        
+        .review-rating {
+          display: flex;
+          align-items: center;
+          gap: 2px;
+          
+          ion-icon {
+            font-size: 14px;
+          }
+          
+          .rating-number {
+            margin-left: 5px;
+            font-size: 12px;
+            color: var(--ion-color-medium);
+            font-weight: bold;
+          }
+        }
+      }
+      
+      .review-date {
+        font-size: 12px;
+        color: var(--ion-color-medium);
+      }
+    }
+    
+    .review-content {
+      p {
+        margin: 0;
+        color: var(--ion-color-dark);
+        line-height: 1.5;
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+// No anime found
+.no-anime {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  
+  ion-icon {
+    margin-bottom: 20px;
+  }
+  
+  h2 {
+    color: var(--ion-color-dark);
+    margin-bottom: 10px;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    margin-bottom: 30px;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .anime-details {
+    .anime-header-card {
+      .anime-image-container {
+        height: 250px;
+      }
+      
+      .anime-title {
+        font-size: 20px;
+      }
+    }
+  }
+  
+  .review-form-card {
+    .star-rating-container {
+      .star-rating {
+        .star-icon {
+          font-size: 20px;
+        }
+      }
+    }
+  }
+}
