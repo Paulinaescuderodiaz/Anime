@@ -43,20 +43,20 @@
         <div class="review-header">
           <h3 class="anime-title">{{ review.animeTitle }}</h3>
           <div class="review-actions">
-            <ion-button 
-              fill="clear" 
-              size="small" 
-              color="primary"
-              (click)="editReview(review)">
-              <ion-icon name="create" slot="icon-only"></ion-icon>
-            </ion-button>
-            <ion-button 
-              fill="clear" 
-              size="small" 
-              color="danger"
-              (click)="deleteReview(review, i)">
-              <ion-icon name="trash" slot="icon-only"></ion-icon>
-            </ion-button>
+            <button 
+              type="button"
+              class="edit-btn"
+              (click)="editReview(review)"
+              style="background: blue; color: white; border: none; padding: 8px; margin: 2px; border-radius: 4px;">
+              ✏️
+            </button>
+            <button 
+              type="button"
+              class="delete-btn"
+              (click)="deleteReview(review, i)"
+              style="background: red; color: white; border: none; padding: 8px; margin: 2px; border-radius: 4px;">
+              🗑️
+            </button>
           </div>
         </div>
         
