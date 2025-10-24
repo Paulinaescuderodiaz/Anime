@@ -55,6 +55,13 @@ export class HomePage implements OnInit {
     try {
       const response = await this.apiService.getTopAnimes().toPromise();
       this.animes = response?.data || [];
+      
+      // Agregar calificaciones de ejemplo si no las tienen
+      this.animes = this.animes.map(anime => ({
+        ...anime,
+        rating: anime.rating || Number((Math.random() * 2 + 3).toFixed(1)) // Calificación entre 3.0 y 5.0
+      }));
+      
     } catch (error) {
       console.error('Error cargando animes:', error);
       const toast = await this.toastCtrl.create({
@@ -175,6 +182,14 @@ export class HomePage implements OnInit {
 
   goToAnimeDetail(animeId: number) {
     this.navCtrl.navigateForward(`/anime-detail/${animeId}`);
+  }
+
+  getStarsArray(rating: number): number[] {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const stars = Array(fullStars).fill(1);
+    if (hasHalfStar) stars.push(0.5);
+    return stars;
   }
 
   onLogout() {

@@ -93,8 +93,14 @@
           <div class="card-image">
             <img [src]="anime.image" [alt]="anime.title" *ngIf="anime.image">
             <div class="rating-overlay" *ngIf="anime.rating">
-              <ion-icon name="star"></ion-icon>
-              <span>{{ anime.rating | number:'1.1-1' }}</span>
+              <div class="stars">
+                <ion-icon 
+                  *ngFor="let star of getStarsArray(anime.rating)" 
+                  name="star" 
+                  color="warning">
+                </ion-icon>
+              </div>
+              <span class="rating-number">{{ anime.rating | number:'1.1-1' }}</span>
             </div>
           </div>
           
