@@ -53,11 +53,16 @@ export class LoginPage {
     if (success) {
       const toast = await this.toastCtrl.create({
         message: 'Login exitoso',
-        duration: 1500,
+        duration: 1000,
         color: 'success'
       });
       await toast.present();
-      this.navCtrl.navigateRoot('/home');
+      
+      // Delay para asegurar que el toast se muestre y el estado se actualice
+      setTimeout(() => {
+        console.log('Navegando a home...');
+        this.navCtrl.navigateForward('/home');
+      }, 500);
     } else {
       const toast = await this.toastCtrl.create({
         message: 'Credenciales incorrectas. Si no tienes cuenta, regístrate.',

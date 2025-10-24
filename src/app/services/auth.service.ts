@@ -12,6 +12,9 @@ export class AuthService {
     const storedSession = localStorage.getItem('currentUser');
     if (storedSession) {
       this.currentUser = storedSession;
+      console.log('AuthService inicializado con usuario:', this.currentUser);
+    } else {
+      console.log('AuthService inicializado sin usuario');
     }
   }
 
@@ -51,7 +54,8 @@ export class AuthService {
       if (user) {
         this.currentUser = email;
         localStorage.setItem('currentUser', email);
-        console.log('Login exitoso');
+        console.log('Login exitoso - Usuario guardado:', email);
+        console.log('Current user después del login:', this.getCurrentUser());
         return true;
       }
       console.log('Login fallido - credenciales incorrectas');
