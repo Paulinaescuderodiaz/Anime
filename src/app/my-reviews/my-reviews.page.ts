@@ -40,6 +40,7 @@ export class MyReviewsPage implements OnInit {
       }
       
       const reviews = JSON.parse(localStorage.getItem(`reviews_${currentUser}`) || '[]');
+      // En la página de gestión mostramos todas las reseñas
       this.reviews = reviews.sort((a: any, b: any) => 
         new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
       );

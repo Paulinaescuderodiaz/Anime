@@ -41,14 +41,48 @@
                 <ion-icon name="trash"></ion-icon>
               </ion-button>
             </div>
-            <ion-button 
-              expand="block" 
-              fill="outline" 
-              (click)="selectPhoto()"
-              *ngIf="!selectedPhoto">
-              <ion-icon name="camera" slot="start"></ion-icon>
-              {{ selectedPhoto ? 'Cambiar Foto' : 'Subir Foto' }}
-            </ion-button>
+            
+            <!-- Botones de opciones de foto -->
+            <div class="photo-options" *ngIf="!selectedPhoto">
+              <ion-button 
+                expand="block" 
+                fill="outline" 
+                (click)="takePhoto()"
+                class="camera-btn">
+                <ion-icon name="camera" slot="start"></ion-icon>
+                Tomar Foto
+              </ion-button>
+              
+              <ion-button 
+                expand="block" 
+                fill="outline" 
+                (click)="selectFromGallery()"
+                class="gallery-btn">
+                <ion-icon name="images" slot="start"></ion-icon>
+                Elegir de Galería
+              </ion-button>
+            </div>
+            
+            <!-- Botón para cambiar foto si ya hay una -->
+            <div class="change-photo-options" *ngIf="selectedPhoto">
+              <ion-button 
+                expand="block" 
+                fill="outline" 
+                (click)="takePhoto()"
+                class="camera-btn">
+                <ion-icon name="camera" slot="start"></ion-icon>
+                Tomar Nueva Foto
+              </ion-button>
+              
+              <ion-button 
+                expand="block" 
+                fill="outline" 
+                (click)="selectFromGallery()"
+                class="gallery-btn">
+                <ion-icon name="images" slot="start"></ion-icon>
+                Elegir Otra de Galería
+              </ion-button>
+            </div>
           </div>
         </ion-item>
 

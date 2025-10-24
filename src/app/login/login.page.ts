@@ -48,7 +48,9 @@ export class LoginPage {
     }
 
     const { email, password } = this.loginForm.value;
+    console.log('Intentando login con:', email);
     const success = await this.authService.login(email, password);
+    console.log('Resultado del login:', success);
 
     if (success) {
       const toast = await this.toastCtrl.create({
@@ -58,11 +60,9 @@ export class LoginPage {
       });
       await toast.present();
       
-      // Delay para asegurar que el toast se muestre y el estado se actualice
-      setTimeout(() => {
-        console.log('Navegando a home...');
-        this.navCtrl.navigateForward('/home');
-      }, 500);
+      // Navegar inmediatamente después del login exitoso
+      console.log('Navegando a home...');
+      this.navCtrl.navigateRoot('/home');
     } else {
       const toast = await this.toastCtrl.create({
         message: 'Credenciales incorrectas. Si no tienes cuenta, regístrate.',

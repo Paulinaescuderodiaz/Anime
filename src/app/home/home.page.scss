@@ -40,15 +40,29 @@ ion-header {
   }
   
   .search-toolbar {
-    --background: #5a67d8;
-    padding: 5px;
+    --background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    padding: 15px;
+    border-radius: 0 0 25px 25px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     
     .custom-searchbar {
-      --background: rgba(255, 255, 255, 0.2);
-      --color: white;
-      --placeholder-color: rgba(255, 255, 255, 0.7);
-      --icon-color: white;
-      --border-radius: 20px;
+      --background: var(--glass-bg);
+      --color: var(--text-primary);
+      --placeholder-color: var(--text-muted);
+      --icon-color: var(--blue-primary);
+      --border-radius: 25px;
+      --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      transition: all 0.3s ease;
+      
+      &:focus-within {
+        --box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        transform: translateY(-2px);
+        border: 1px solid var(--blue-primary);
+      }
     }
   }
 }
@@ -96,9 +110,44 @@ ion-card img {
   margin: 20px 0;
 }
 
-// Estilos para las fotos
+// Estilos generales de la página - Tema Oscuro
+ion-content {
+  --background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  min-height: 100vh;
+  color: #ffffff;
+}
+
+// Variables de colores del tema oscuro
+:root {
+  --dark-bg: #0f0f23;
+  --dark-secondary: #1a1a2e;
+  --dark-accent: #16213e;
+  --blue-primary: #3b82f6;
+  --blue-secondary: #1d4ed8;
+  --blue-accent: #60a5fa;
+  --text-primary: #ffffff;
+  --text-secondary: #e5e7eb;
+  --text-muted: #d1d5db;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+}
+
+// Estilos para las fotos - Tema Oscuro
 .photos-section {
   margin-bottom: 30px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  
+  .section-title {
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
   
   .photos-grid {
     display: grid;
@@ -129,18 +178,63 @@ ion-card img {
   }
 }
 
-// Estilos para las reseñas personalizadas
+// Estilos para las reseñas personalizadas - Tema Oscuro
 .reviews-section {
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--blue-primary) 0%, var(--blue-secondary) 100%);
+    opacity: 0.1;
+    border-radius: 20px;
+    z-index: -1;
+  }
   
   .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     
     .section-title {
       margin: 0;
+      color: var(--text-primary);
+      font-size: 24px;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      background: linear-gradient(135deg, var(--blue-primary) 0%, var(--blue-accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    ion-button {
+      --background: var(--blue-primary);
+      --color: white;
+      --border-radius: 25px;
+      --padding-start: 16px;
+      --padding-end: 16px;
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--blue-secondary);
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+      
+      &:hover {
+        --background: var(--blue-secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+      }
     }
   }
   
@@ -151,6 +245,7 @@ ion-card img {
     scrollbar-width: none;
     -ms-overflow-style: none;
     padding: 0 10px;
+    max-width: 100%;
     
     &::-webkit-scrollbar {
       display: none;
@@ -162,20 +257,26 @@ ion-card img {
       padding: 0 0 10px 0;
       width: max-content;
       min-width: 100%;
+      justify-content: flex-start; // Alinear a la izquierda
     }
   }
   
   .review-card {
-    border-radius: 15px;
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
-    flex: 0 0 280px; // Ancho fijo para el slider
-    max-width: 280px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    flex: 0 0 60%; // 60% del ancho de la pantalla
+    max-width: 60%;
+    width: 60%; // Forzar el ancho al 60%
+    background: rgba(255, 255, 255, 0.8); // MUY claro para móvil
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.9);
     
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--blue-primary);
     }
     
     .card-image {
@@ -223,6 +324,8 @@ ion-card img {
     
     .card-content {
       padding: 15px;
+      background: rgba(255, 255, 255, 0.6); // MUY claro para móvil
+      backdrop-filter: blur(10px);
       
       .review-header {
         display: flex;
@@ -234,38 +337,60 @@ ion-card img {
           font-size: 18px;
           font-weight: bold;
           margin: 0;
-          color: var(--ion-color-primary);
+          color: #1a1a1a; // Texto oscuro para contraste
           flex: 1;
           margin-right: 10px;
+          text-shadow: none; // Sin sombra para mejor legibilidad
         }
         
         .review-actions {
           display: flex;
-          gap: 5px;
+          gap: 8px;
           flex-shrink: 0;
           
-          ion-button {
-            --padding-start: 8px;
-            --padding-end: 8px;
-            --padding-top: 8px;
-            --padding-bottom: 8px;
-            min-width: 40px;
-            height: 40px;
-            margin: 0;
+          button {
+            border: none;
+            border-radius: 12px;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
             
-            ion-icon {
-              font-size: 16px;
+            &:hover {
+              transform: translateY(-2px) scale(1.05);
+              box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            }
+            
+            &:active {
+              transform: translateY(0) scale(0.95);
             }
           }
           
           .edit-btn {
-            --color: var(--ion-color-primary);
-            --background: transparent;
+            background: linear-gradient(135deg, var(--blue-primary) 0%, var(--blue-secondary) 100%);
+            color: white;
+            border: 1px solid var(--blue-secondary);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            
+            &:hover {
+              background: linear-gradient(135deg, var(--blue-secondary) 0%, var(--blue-primary) 100%);
+              box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+            }
           }
           
           .delete-btn {
-            --color: var(--ion-color-danger);
-            --background: transparent;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: 1px solid #dc2626;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+            
+            &:hover {
+              background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+              box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+            }
           }
         }
       }
@@ -285,7 +410,7 @@ ion-card img {
         
         .review-date {
           font-size: 12px;
-          color: var(--ion-color-medium);
+          color: #4a4a4a; // Texto oscuro para contraste
         }
         
         .stars-inline {
@@ -302,30 +427,56 @@ ion-card img {
       .review-comment {
         font-size: 14px;
         line-height: 1.4;
-        color: var(--ion-color-dark);
+        color: #2a2a2a; // Texto oscuro para contraste
         margin: 0;
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        text-shadow: none; // Sin sombra para mejor legibilidad
       }
     }
   }
 }
 
-// Estilos para los animes
+// Estilos para los animes - Tema Oscuro
 .animes-section {
+  .section-title {
+    color: white; // Más claro
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 25px;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  // Layout en filas hacia abajo (una sola columna)
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0 10px;
+  
   .anime-card {
-    margin: 15px 0;
-    border-radius: 15px;
+    margin: 0;
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background: #F5F5DC; // Color beige
+    backdrop-filter: blur(20px);
+    border: 1px solid #D2B48C; // Borde beige más oscuro
+    width: 100%;
+    max-width: 100%;
     
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--blue-primary);
     }
     
     .card-image {
@@ -372,7 +523,9 @@ ion-card img {
     }
     
     .card-content {
-      padding: 15px;
+      padding: 20px;
+      background: rgba(245, 245, 220, 0.8); // Fondo beige translúcido
+      backdrop-filter: blur(10px);
       
       .categories {
         margin-bottom: 10px;
@@ -380,6 +533,8 @@ ion-card img {
         ion-chip {
           margin-right: 5px;
           margin-bottom: 5px;
+          --background: var(--blue-primary);
+          --color: white;
         }
       }
       
@@ -387,7 +542,8 @@ ion-card img {
         font-size: 18px;
         font-weight: bold;
         margin: 10px 0;
-        color: #333;
+        color: #2c2c2c; // Texto oscuro para contraste con beige
+        text-shadow: none; // Sin sombra para mejor legibilidad
       }
       
       .meta-info {
@@ -395,30 +551,35 @@ ion-card img {
         justify-content: space-between;
         margin-bottom: 10px;
         font-size: 14px;
-        color: #666;
+        color: #4a4a4a; // Texto oscuro para contraste con beige
+        text-shadow: none; // Sin sombra para mejor legibilidad
         
         .year {
           font-weight: bold;
+          color: #2c2c2c; // Texto oscuro para contraste
         }
         
         .status {
-          background: #e3f2fd;
-          color: #1976d2;
+          background: var(--blue-primary);
+          color: white;
           padding: 2px 8px;
           border-radius: 10px;
           font-size: 12px;
+          text-shadow: none;
         }
       }
       
       .description {
-        color: #666;
+        color: #4a4a4a; // Texto oscuro para contraste con beige
         line-height: 1.4;
         margin-bottom: 15px;
+        text-shadow: none; // Sin sombra para mejor legibilidad
       }
       
       .read-more-btn {
-        --color: #667eea;
+        --color: var(--blue-primary);
         font-weight: bold;
+        text-shadow: none; // Sin sombra para mejor legibilidad
       }
     }
   }

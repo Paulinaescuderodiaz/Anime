@@ -67,4 +67,37 @@ ion-range {
       --color: white;
     }
   }
+  
+  .photo-options, .change-photo-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+    
+    .camera-btn {
+      --background: linear-gradient(135deg, #4A90E2, #357ABD);
+      --color: white;
+      --border-radius: 12px;
+      --box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      
+      &:hover {
+        --background: linear-gradient(135deg, #357ABD, #2E6BA8);
+        transform: translateY(-2px);
+        --box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+      }
+    }
+    
+    .gallery-btn {
+      --background: linear-gradient(135deg, #28a745, #1e7e34);
+      --color: white;
+      --border-radius: 12px;
+      --box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+      
+      &:hover {
+        --background: linear-gradient(135deg, #1e7e34, #155724);
+        transform: translateY(-2px);
+        --box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+      }
+    }
+  }
 }

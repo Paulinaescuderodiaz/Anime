@@ -57,7 +57,10 @@ export class HomePage implements OnInit {
     this.loading = true;
     try {
       const response = await this.apiService.getTopAnimes().toPromise();
-      this.animes = response?.data || [];
+      const allAnimes = response?.data || [];
+      
+      // Limitar a exactamente 10 animes
+      this.animes = allAnimes.slice(0, 10);
       
       // Agregar calificaciones de ejemplo si no las tienen
       this.animes = this.animes.map(anime => ({
@@ -87,7 +90,10 @@ export class HomePage implements OnInit {
     this.loading = true;
     try {
       const response = await this.apiService.searchAnimes(this.searchQuery).toPromise();
-      this.animes = response?.data || [];
+      const allAnimes = response?.data || [];
+      
+      // Limitar a exactamente 10 animes en la búsqueda también
+      this.animes = allAnimes.slice(0, 10);
     } catch (error) {
       console.error('Error buscando animes:', error);
       const toast = await this.toastCtrl.create({
@@ -241,7 +247,13 @@ export class HomePage implements OnInit {
     try {
       const currentUser = this.authService.getCurrentUser();
       if (!currentUser) {
-        this.showToast('Usuario no autenticado', 'danger');
+        const toast = await this.toastCtrl.create({
+          message: 'Usuario no autenticado',
+          duration: 2000,
+          color: 'danger',
+          position: 'bottom'
+        });
+        await toast.present();
         return;
       }
       
@@ -287,9 +299,12 @@ export class HomePage implements OnInit {
       }
       
       const reviews = JSON.parse(localStorage.getItem(`reviews_${currentUser}`) || '[]');
-      this.customReviews = reviews.sort((a: any, b: any) => 
-        new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
-      );
+      // Ordenar por fecha y limitar a 10 reseñas máximo
+      this.customReviews = reviews
+        .sort((a: any, b: any) => 
+          new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+        )
+        .slice(0, 10); // Limitar a 10 reseñas máximo
     } catch (error) {
       console.error('Error cargando reseñas personalizadas:', error);
       this.customReviews = [];

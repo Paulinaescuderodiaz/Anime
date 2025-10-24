@@ -28,11 +28,6 @@
     </ion-header>
     
     <ion-content class="ion-padding">
-      <ion-button expand="block" (click)="presentActionSheet()">
-        <ion-icon name="camera" slot="start"></ion-icon>
-        Tomar Foto
-      </ion-button>
-      
       <ion-button expand="block" fill="outline" (click)="goToAddReview()">
         <ion-icon name="add-circle" slot="start"></ion-icon>
         Agregar Reseña
@@ -118,16 +113,14 @@
                     <button 
                       type="button"
                       class="edit-btn"
-                      (click)="editReview(review)"
-                      style="background: blue; color: white; border: none; padding: 8px; margin: 2px; border-radius: 4px;">
-                      ✏️
+                      (click)="editReview(review)">
+                      ✏️ Editar
                     </button>
                     <button 
                       type="button"
                       class="delete-btn"
-                      (click)="deleteReview(review)"
-                      style="background: red; color: white; border: none; padding: 8px; margin: 2px; border-radius: 4px;">
-                      🗑️
+                      (click)="deleteReview(review)">
+                      🗑️ Eliminar
                     </button>
                   </div>
                 </div>
