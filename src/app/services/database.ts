@@ -13,15 +13,17 @@ export class DatabaseService {
   async crearBD() {
     try {
       await this.platform.ready();
+      console.log('Platform ready, creating database...');
 
       this.db = await this.sqlite.create({
         name: 'AniVerse.db',
         location: 'default'
       });
+      console.log('Database created successfully');
 
       // Crear tablas
       await this.db.executeSql(`
-        CREATE TABLE IF NOT EXIST usuarios (
+        CREATE TABLE IF NOT EXISTS usuarios (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           nombre TEXT,
           email TEXT UNIQUE,
@@ -30,7 +32,7 @@ export class DatabaseService {
       `, []);
 
       await this.db.executeSql(`
-        CREATE TABLE IF NOT EXIST animes (
+        CREATE TABLE IF NOT EXISTS animes (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           titulo TEXT,
           descripcion TEXT,
@@ -39,7 +41,7 @@ export class DatabaseService {
       `, []);
 
       await this.db.executeSql(`
-        CREATE TABLE IF NOT EXIST reseñas (
+        CREATE TABLE IF NOT EXISTS reseñas (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           usuarioId INTEGER,
           animeId INTEGER,
@@ -51,7 +53,7 @@ export class DatabaseService {
       `, []);
 
       await this.db.executeSql(`
-        CREATE TABLE IF NOT EXIST listas (
+        CREATE TABLE IF NOT EXISTS listas (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           usuarioId INTEGER,
           animeId INTEGER,
@@ -64,6 +66,7 @@ export class DatabaseService {
       console.log('Base de datos y tablas listas ');
     } catch (e) {
       console.error('Error creando la BD', e);
+      throw e; // Re-throw para que el error se propague
     }
   }
 
@@ -84,6 +87,15 @@ export class DatabaseService {
     const res = await this.db.executeSql(
       `SELECT * FROM usuarios WHERE email = ? AND password = ?`,
       [email, password]
+    );
+    return res.rows.length > 0 ? res.rows.item(0) : null;
+  }
+
+  async getUserByEmail(email: string) {
+    if (!this.db) return null;
+    const res = await this.db.executeSql(
+      `SELECT * FROM usuarios WHERE email = ?`,
+      [email]
     );
     return res.rows.length > 0 ? res.rows.item(0) : null;
   }

@@ -17,14 +17,21 @@ export class AuthService {
 
   async register(email: string, password: string, nombre?: string): Promise<boolean> {
     try {
-      // Verificar si el usuario ya existe
-      const existingUser = await this.databaseService.login(email, password);
+      console.log('Intentando registrar usuario:', email);
+      
+      // Fallback a localStorage si SQLite falla
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const existingUser = users.find((u: any) => u.email === email);
+      
       if (existingUser) {
-        return false; // Usuario ya existe
+        console.log('Usuario ya existe');
+        return false;
       }
 
-      // Registrar nuevo usuario
-      await this.databaseService.registrarUsuario(nombre || email, email, password);
+      // Registrar en localStorage como fallback
+      users.push({ email, password, nombre: nombre || email });
+      localStorage.setItem('users', JSON.stringify(users));
+      console.log('Usuario registrado exitosamente en localStorage');
       return true;
     } catch (error) {
       console.error('Error registrando usuario:', error);
@@ -34,12 +41,20 @@ export class AuthService {
 
   async login(email: string, password: string): Promise<boolean> {
     try {
-      const user = await this.databaseService.login(email, password);
+      console.log('Intentando login con:', email);
+      
+      // Fallback a localStorage si SQLite falla
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const user = users.find((u: any) => u.email === email && u.password === password);
+      console.log('Resultado del login:', user);
+      
       if (user) {
         this.currentUser = email;
         localStorage.setItem('currentUser', email);
+        console.log('Login exitoso');
         return true;
       }
+      console.log('Login fallido - credenciales incorrectas');
       return false;
     } catch (error) {
       console.error('Error en login:', error);
