@@ -1,0 +1,97 @@
+// Estilos generales
+
+
+
+// Estilos para el header
+ion-header {
+  ion-toolbar {
+    --background: #667eea;
+    --color: white;
+    
+    .app-title {
+      color: white;
+      font-weight: bold;
+      text-align: center;
+    }
+    
+    .user-section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      .user-avatar {
+        width: 35px;
+        height: 35px;
+        
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+      
+      .user-name {
+        color: white;
+        font-size: 14px;
+        font-weight: 500;
+      }
+    
+    }
+  }
+  
+  .search-toolbar {
+    --background: #5a67d8;
+    padding: 5px;
+    
+    .custom-searchbar {
+      --background: rgba(255, 255, 255, 0.2);
+      --color: white;
+      --placeholder-color: rgba(255, 255, 255, 0.7);
+      --icon-color: white;
+      --border-radius: 20px;
+    }
+  }
+}
+
+ion-searchbar {
+  --background: #f4f4f45f;
+  --border-radius: 10px;
+  margin: 5px;
+  width: 20%;
+  --placeholder-color: #8c8c8c;
+  --icon-color: #8c8c8c;
+
+}
+
+ion-card {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 40px;
+  padding: 20px;
+  width: auto;
+  display: flex;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+}
+
+ion-card img {
+  width: 20%;
+  height: auto;
+  border-radius: 30px;
+  margin-bottom: 15px;
+}
+.main-background {
+  background-image: url('src/assets/img/3.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+}.section-title {
+  text-align: center;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 20px 0;
+}

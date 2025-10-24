@@ -1,0 +1,179 @@
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  .logo-img {
+    max-width: 200px;  // Ajusta el tamaño máximo del logo
+    height: auto;
+    border-radius: 100%; // Bordes redondeados
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); // Sombra para darle profundidad
+  }
+}
+
+.neko {
+  font-size: 50px;
+  color: whitesmoke;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  font-weight: bold;
+  text-shadow: 10px 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+.version-info {
+  text-align: center;
+  font-size: 0.8em;
+  color: #888;
+  margin-top: 16px;
+}
+
+/* === CONTENEDOR PRINCIPAL === */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  height: auto;
+  padding: 30px;
+
+  /* Imagen de fondo estilo anime */
+  background-image: url('src/assets/img/3.png');  
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+  /* Caja translúcida para el formulario */
+  .overlay {
+    background-color: rgba(0, 0, 0, 0.6); /* oscurece para contraste */
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    align-self: center;
+  }
+
+  form {
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    width: 90%;
+    margin-top: 20px;
+    max-width: 450px;
+    align-self: center;
+  }
+
+  ion-button {
+    --border-radius: 25px;        // Hace los botones ovalados
+    height: 45px;
+    font-size: 16px;
+    margin: 5px 0;
+  }
+
+  ion-item {
+    --border-radius: 15px;
+    margin-bottom: 15px;
+    --background: rgba(62, 199, 172, 0.584); /* Fondo semi-transparente */
+    --color: #fff;
+  }
+
+  ion-input {
+    color: #fff;
+  }
+}
+
+/* === OLVIDÉ CONTRASEÑA === */
+.forgot-password {
+  text-align: center;
+  color: #18f2d5;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin: 15px 0;
+  padding: 8px;
+  transition: all 0.3s ease;
+  border-radius: 6px;
+
+  &:hover {
+    color: #da1717;
+    background-color: rgba(155, 52, 143, 0.1);
+  }
+
+  &:active {
+    background-color: rgba(170, 46, 114, 0.2);
+    transform: scale(0.98);
+  }
+}
+
+/* === MODAL === */
+ion-modal {
+  --backdrop-opacity: 0.7;
+  --width: 90%;
+  --max-width: 400px;
+  --border-radius: 20px;
+  --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+ion-modal ion-header ion-toolbar {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --color: white;
+  --border-radius: 20px 20px 0 0;
+}
+
+ion-modal ion-title {
+  color: white;
+  font-weight: 600;
+  text-align: center;
+}
+
+ion-modal ion-header ion-button {
+  --color: white;
+}
+
+ion-modal ion-content {
+  --background: #f8f9fa;
+}
+
+ion-modal ion-content p {
+  color: #892727;
+  font-size: 16px;
+  text-align: center;
+  margin: 20px 16px;
+}
+
+ion-modal ion-item {
+  --background: white;
+  --border-radius: 12px;
+  margin: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+ion-modal ion-button:not([fill="clear"]) {
+  --background: #db66ea;
+  --color: white;
+  --border-radius: 25px;
+  height: 48px;
+  margin: 20px 16px;
+  font-weight: 600;
+}
+
+custom-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #892727;
+  text-align: center;
+  margin: 16px 0;
+}
+
+custom-content {
+  font-size: 16px;
+  color: #df2525;
+  text-align: center;
+  margin: 16px 0;
+}

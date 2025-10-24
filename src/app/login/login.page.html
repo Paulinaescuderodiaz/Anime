@@ -1,0 +1,75 @@
+<ion-content>
+  <div class="login-container">
+    <!-- Logo (usa la ruta que tengas en tu proyecto) -->
+    <div class="logo-container">
+      <img src="assets/img/4.png" alt="Logo" class="logo-img" />
+    </div>
+
+    <div class="neko">NEKO LOGIN</div>
+
+    <!-- formulario inicio sesion -->
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      <ion-item>
+        <ion-label position="stacked">Correo</ion-label>
+        <ion-input formControlName="email" type="email" placeholder="correo@ejemplo.com"></ion-input>
+      </ion-item>
+      <ion-note color="danger" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+        Ingresa un correo válido.
+      </ion-note>
+
+      <ion-item>
+        <ion-label position="stacked">Contraseña</ion-label>
+        <ion-input formControlName="password" type="password" placeholder="*******"></ion-input>
+      </ion-item>
+      <ion-note color="danger" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+        La contraseña es obligatoria.
+      </ion-note>
+
+      <ion-button type="submit" expand="block" [disabled]="loginForm.invalid">
+        Iniciar sesión
+      </ion-button>
+    </form>
+    <!-- fin formulario inicio sesion -->
+    <div class="forgot-password" (click)="openForgotPasswordModal()">
+      ¿Olvidaste tu contraseña?
+    </div>
+
+    <ion-button expand="full" fill="clear" (click)="goToRegister()">
+      Registrarse
+    </ion-button>
+
+    <div class="version-info">v1.0.0</div>
+  </div>
+
+  <!-- Modal de recuperar contraseña -->
+  <ion-modal [isOpen]="isForgotPasswordModalOpen" (willDismiss)="closeForgotPasswordModal()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Recuperar contraseña</ion-title>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <ion-item>
+          <ion-toolbar>
+            <h3 class="modal-title">Recuperar contraseña</h3>
+            <p>Ingresa tu correo electrónico, para recuperar tu contraseña</p>
+          </ion-toolbar>
+          <ion-label position="stacked">Correo electrónico</ion-label>
+          <ion-input type="email" [(ngModel)]="forgotPasswordEmail" name="forgotPasswordEmail"
+            placeholder="correo@ejemplo.com">
+          </ion-input>
+        </ion-item>
+
+        <ion-button expand="block" (click)="sendResetPasswordEmail()">
+          Enviar correo
+        </ion-button>
+
+        <ion-button expand="block" fill="clear" (click)="closeForgotPasswordModal()">
+          Cancelar
+        </ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

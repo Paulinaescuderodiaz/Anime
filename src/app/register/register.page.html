@@ -1,0 +1,27 @@
+<ion-content>
+  <div class="register-container">
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+      <ion-item>
+        <ion-input
+          label="Correo"
+          type="email"
+          formControlName="email"
+          placeholder="Ingresa tu correo">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Contraseña"
+          type="password"
+          formControlName="password"
+          placeholder="Ingresa tu contraseña">
+        </ion-input>
+      </ion-item>
+
+      <ion-button expand="block" type="submit" [disabled]="registerForm.invalid">
+        Registrarse
+      </ion-button>
+    </form>
+  </div>
+</ion-content>
