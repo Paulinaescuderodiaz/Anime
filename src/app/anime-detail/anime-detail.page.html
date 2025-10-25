@@ -161,10 +161,24 @@
   <div *ngIf="!loading && !anime" class="no-anime">
     <ion-icon name="sad-outline" size="large" color="medium"></ion-icon>
     <h2>Anime no encontrado</h2>
-    <p>No se pudo cargar la información del anime.</p>
-    <ion-button (click)="goBack()" fill="outline">
-      <ion-icon name="arrow-back" slot="start"></ion-icon>
-      Volver
-    </ion-button>
+    <p>No se pudo cargar la información del anime con ID: {{ animeId }}</p>
+    <p class="error-details">
+      Esto puede deberse a:
+    </p>
+    <ul class="error-list">
+      <li>El anime no existe en la base de datos</li>
+      <li>Problemas de conexión a internet</li>
+      <li>El ID del anime es inválido</li>
+    </ul>
+    <div class="action-buttons">
+      <ion-button (click)="goBack()" fill="outline" color="primary">
+        <ion-icon name="arrow-back" slot="start"></ion-icon>
+        Volver
+      </ion-button>
+      <ion-button (click)="loadAnimeDetails()" fill="solid" color="secondary">
+        <ion-icon name="refresh" slot="start"></ion-icon>
+        Reintentar
+      </ion-button>
+    </div>
   </div>
 </ion-content>

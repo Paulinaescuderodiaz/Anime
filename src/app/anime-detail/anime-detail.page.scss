@@ -276,16 +276,52 @@
   
   ion-icon {
     margin-bottom: 20px;
+    font-size: 64px;
   }
   
   h2 {
     color: var(--ion-color-dark);
     margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: bold;
   }
   
   p {
     color: var(--ion-color-medium);
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+  
+  .error-details {
+    font-weight: bold;
+    color: var(--ion-color-dark);
+    margin-bottom: 15px;
+  }
+  
+  .error-list {
+    text-align: left;
     margin-bottom: 30px;
+    padding-left: 20px;
+    
+    li {
+      color: var(--ion-color-medium);
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+  }
+  
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 300px;
+    
+    ion-button {
+      --border-radius: 10px;
+      font-weight: bold;
+      height: 48px;
+    }
   }
 }
 

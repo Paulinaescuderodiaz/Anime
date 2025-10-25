@@ -59,10 +59,22 @@ export class HomePage implements OnInit {
     this.loading = true;
     try {
       const response = await this.apiService.getTopAnimes().toPromise();
+      console.log('Respuesta completa de la API:', response);
       const allAnimes = response?.data || [];
+      console.log('Animes obtenidos:', allAnimes);
       
       // Limitar a exactamente 10 animes
       this.animes = allAnimes.slice(0, 10);
+      console.log('Animes procesados:', this.animes);
+      
+      // Log de cada anime para verificar IDs
+      this.animes.forEach((anime, index) => {
+        console.log(`Anime ${index + 1}:`, {
+          id: anime.id,
+          title: anime.title,
+          type: typeof anime.id
+        });
+      });
       
       // Agregar calificaciones de ejemplo si no las tienen
       this.animes = this.animes.map(anime => ({
@@ -194,6 +206,9 @@ export class HomePage implements OnInit {
   }
 
   goToAnimeDetail(animeId: number) {
+    console.log('Navegando a detalles del anime con ID:', animeId);
+    console.log('Tipo del ID:', typeof animeId);
+    console.log('ID es válido:', !isNaN(animeId) && animeId > 0);
     this.navCtrl.navigateForward(`/anime-detail/${animeId}`);
   }
 

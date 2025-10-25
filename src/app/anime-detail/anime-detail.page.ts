@@ -13,6 +13,13 @@ import {
   IonSpinner, IonAvatar, IonNote, IonBadge
 } from '@ionic/angular/standalone';
 
+// Interfaz para manejar errores HTTP
+interface HttpError {
+  status?: number;
+  message?: string;
+  error?: any;
+}
+
 @Component({
   selector: 'app-anime-detail',
   templateUrl: './anime-detail.page.html',
@@ -59,24 +66,67 @@ export class AnimeDetailPage implements OnInit {
 
   async ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
-    this.animeId = +this.route.snapshot.paramMap.get('id')!;
     
-    if (this.animeId) {
-      await this.loadAnimeDetails();
-      await this.loadReviews();
-      await this.checkUserReview();
+    // Obtener y validar el ID del anime
+    const idParam = this.route.snapshot.paramMap.get('id');
+    console.log('ID recibido desde la URL:', idParam);
+    
+    if (!idParam) {
+      console.error('ID de anime no proporcionado:', idParam);
+      const toast = await this.toastCtrl.create({
+        message: 'ID de anime no proporcionado. Redirigiendo al inicio.',
+        duration: 3000,
+        color: 'danger'
+      });
+      await toast.present();
+      this.navCtrl.navigateRoot('/home');
+      return;
     }
+    
+    // Convertir a número y validar
+    const numericId = +idParam;
+    if (isNaN(numericId) || numericId <= 0) {
+      console.error('ID de anime inválido:', idParam, 'convertido a:', numericId);
+      const toast = await this.toastCtrl.create({
+        message: `ID de anime inválido: ${idParam}. Redirigiendo al inicio.`,
+        duration: 3000,
+        color: 'danger'
+      });
+      await toast.present();
+      this.navCtrl.navigateRoot('/home');
+      return;
+    }
+    
+    this.animeId = +idParam;
+    console.log('ID de anime válido:', this.animeId);
+    
+    await this.loadAnimeDetails();
+    await this.loadReviews();
+    await this.checkUserReview();
   }
 
   async loadAnimeDetails() {
     this.loading = true;
+    
+    // Validar que el ID sea válido
+    if (!this.animeId || isNaN(this.animeId) || this.animeId <= 0) {
+      console.error('ID de anime inválido:', this.animeId);
+      this.loading = false;
+      return;
+    }
+    
     try {
       console.log('Cargando detalles del anime ID:', this.animeId);
+      console.log('URL de la API:', `https://api.jikan.moe/v4/anime/${this.animeId}`);
+      
       const response = await this.apiService.getAnimeById(this.animeId).toPromise();
-      console.log('Respuesta de la API:', response);
+      console.log('Respuesta completa de la API:', response);
+      console.log('Tipo de respuesta:', typeof response);
+      console.log('Datos del anime:', response?.data);
       
       // La API de Jikan devuelve los datos en response.data
       this.anime = response?.data || null;
+      console.log('Anime procesado:', this.anime);
       
       if (!this.anime) {
         console.log('No se encontró anime con ID:', this.animeId);
@@ -92,11 +142,26 @@ export class AnimeDetailPage implements OnInit {
           status: 'En emisión'
         };
         console.log('Usando datos de ejemplo:', this.anime.title);
+        
+        const toast = await this.toastCtrl.create({
+          message: 'Anime no encontrado en la base de datos. Usando datos de ejemplo.',
+          duration: 3000,
+          color: 'warning'
+        });
+        await toast.present();
       } else {
         console.log('Anime cargado:', this.anime.title);
       }
     } catch (error) {
       console.error('Error cargando detalles del anime:', error);
+      
+      // Probar conectividad de la API
+      const isApiConnected = await this.testApiConnectivity();
+      console.log('API conectada:', isApiConnected);
+      
+      // Determinar el tipo de error
+      const httpError = error as HttpError;
+      const errorMessage = this.getErrorMessage(httpError, isApiConnected);
       
       // Crear datos de ejemplo como fallback
       this.anime = {
@@ -111,8 +176,8 @@ export class AnimeDetailPage implements OnInit {
       };
       
       const toast = await this.toastCtrl.create({
-        message: 'Usando datos de ejemplo para demostrar el sistema',
-        duration: 2000,
+        message: `${errorMessage}. Usando datos de ejemplo.`,
+        duration: 4000,
         color: 'warning'
       });
       await toast.present();
@@ -256,5 +321,37 @@ export class AnimeDetailPage implements OnInit {
 
   getStarsArray(rating: number): number[] {
     return Array.from({ length: 5 }, (_, i) => i < rating ? 1 : 0);
+  }
+
+  // Método para probar la conectividad de la API
+  async testApiConnectivity() {
+    try {
+      console.log('Probando conectividad con la API de Jikan...');
+      const response = await this.apiService.getTopAnimes().toPromise();
+      console.log('Conectividad exitosa:', response ? 'Sí' : 'No');
+      return response !== null;
+    } catch (error) {
+      console.error('Error de conectividad:', error);
+      return false;
+    }
+  }
+
+  // Método para obtener un mensaje de error más específico
+  private getErrorMessage(error: HttpError, isApiConnected: boolean): string {
+    if (!isApiConnected) {
+      return 'Sin conexión a internet o API no disponible';
+    }
+    
+    if (error.status === 404) {
+      return 'Anime no encontrado en la base de datos';
+    } else if (error.status === 429) {
+      return 'Demasiadas solicitudes. Intenta más tarde';
+    } else if (error.status && error.status >= 500) {
+      return 'Error del servidor. Intenta más tarde';
+    } else if (error.status && error.status >= 400) {
+      return 'Error en la solicitud. Verifica el ID del anime';
+    }
+    
+    return 'Error desconocido al cargar el anime';
   }
 }
