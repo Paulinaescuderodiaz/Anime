@@ -12,6 +12,17 @@ import {
   IonButtons, IonInput
 } from '@ionic/angular/standalone';
 
+/**
+ * PÁGINA PARA AGREGAR RESEÑAS
+ * 
+ * Esta página permite a los usuarios crear nuevas reseñas de animes:
+ * - Formulario para ingresar título del anime
+ * - Sistema de calificación con estrellas
+ * - Campo de comentario
+ * - Funcionalidad de cámara para agregar fotos
+ * - Validación de formulario
+ * - Guardado en localStorage por usuario
+ */
 @Component({
   selector: 'app-add-review',
   templateUrl: 'add-review.page.html',
@@ -27,10 +38,21 @@ import {
   ],
 })
 export class AddReviewPage implements OnInit {
+  // === PROPIEDADES DEL FORMULARIO ===
+  
+  // Título del anime a reseñar
   animeTitle: string = '';
+  
+  // Foto seleccionada para la reseña
   selectedPhoto: Photo | null = null;
+  
+  // Calificación del anime (1-5)
   rating: number = 5;
+  
+  // Comentario de la reseña
   comment: string = '';
+  
+  // Estado de envío del formulario
   submitting: boolean = false;
 
   constructor(
@@ -42,10 +64,24 @@ export class AddReviewPage implements OnInit {
     private actionSheetCtrl: ActionSheetController
   ) {}
 
+  /**
+   * INICIALIZACIÓN DE LA PÁGINA
+   * 
+   * No necesita cargar datos adicionales ya que el usuario
+   * ingresará toda la información manualmente.
+   */
   async ngOnInit() {
     // No necesitamos cargar animes ya que el usuario ingresará el título manualmente
   }
 
+  /**
+   * GENERAR ARRAY DE ESTRELLAS PARA CALIFICACIÓN
+   * 
+   * Convierte una calificación numérica en un array para mostrar estrellas.
+   * 
+   * @param rating - Calificación del anime (1-5)
+   * @returns Array de números representando estrellas
+   */
   getStarsArray(rating: number): number[] {
     const stars = [];
     for (let i = 0; i < Math.floor(rating); i++) {
@@ -54,6 +90,14 @@ export class AddReviewPage implements OnInit {
     return stars;
   }
 
+  /**
+   * MOSTRAR OPCIONES DE CÁMARA
+   * 
+   * Muestra un ActionSheet con opciones para:
+   * - Tomar foto con la cámara
+   * - Seleccionar de la galería
+   * - Cancelar operación
+   */
   async selectPhoto() {
     const actionSheet = await this.actionSheetCtrl.create({
       header: 'Seleccionar foto',
@@ -82,6 +126,12 @@ export class AddReviewPage implements OnInit {
     await actionSheet.present();
   }
 
+  /**
+   * TOMAR FOTO CON LA CÁMARA
+   * 
+   * Abre la cámara del dispositivo para capturar una nueva foto.
+   * La foto se asigna a la reseña.
+   */
   async takePhoto() {
     try {
       const photo = await this.cameraService.takePicture();
@@ -92,6 +142,12 @@ export class AddReviewPage implements OnInit {
     }
   }
 
+  /**
+   * SELECCIONAR IMAGEN DE LA GALERÍA
+   * 
+   * Abre la galería del dispositivo para seleccionar una imagen existente.
+   * La imagen se asigna a la reseña.
+   */
   async selectFromGallery() {
     try {
       const photo = await this.cameraService.selectFromGallery();
@@ -102,10 +158,25 @@ export class AddReviewPage implements OnInit {
     }
   }
 
+  /**
+   * ELIMINAR FOTO SELECCIONADA
+   * 
+   * Remueve la foto seleccionada de la reseña.
+   */
   removePhoto() {
     this.selectedPhoto = null;
   }
 
+  /**
+   * ENVIAR RESEÑA
+   * 
+   * Esta función procesa el envío de la reseña:
+   * 1. Valida el formulario
+   * 2. Verifica autenticación del usuario
+   * 3. Crea los datos de la reseña
+   * 4. Guarda en localStorage por usuario
+   * 5. Navega de vuelta a home
+   */
   async onSubmit(form: any) {
     if (!form.valid || !this.animeTitle.trim()) {
       this.showToast('Por favor completa todos los campos requeridos', 'warning');

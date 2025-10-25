@@ -13,13 +13,27 @@ import {
   IonSpinner, IonAvatar, IonNote, IonBadge
 } from '@ionic/angular/standalone';
 
-// Interfaz para manejar errores HTTP
+/**
+ * INTERFAZ PARA MANEJAR ERRORES HTTP
+ * 
+ * Define la estructura de errores HTTP para un mejor manejo de excepciones.
+ */
 interface HttpError {
   status?: number;
   message?: string;
   error?: any;
 }
 
+/**
+ * PÁGINA DE DETALLES DEL ANIME
+ * 
+ * Esta página muestra información detallada de un anime específico:
+ * - Información completa del anime desde la API
+ * - Sistema de reseñas y calificaciones
+ * - Formulario para crear/editar reseñas
+ * - Lista de reseñas de otros usuarios
+ * - Navegación de vuelta
+ */
 @Component({
   selector: 'app-anime-detail',
   templateUrl: './anime-detail.page.html',
@@ -36,10 +50,17 @@ interface HttpError {
   ]
 })
 export class AnimeDetailPage implements OnInit {
+  // === PROPIEDADES PRINCIPALES ===
+  
+  // Información del anime actual
   anime: Anime | null = null;
   animeId: number = 0;
+  
+  // Sistema de reseñas
   reviews: Review[] = [];
   averageRating: number = 0;
+  
+  // Estados de la interfaz
   loading = false;
   reviewForm: FormGroup;
   currentUser: string | null = null;
@@ -64,10 +85,20 @@ export class AnimeDetailPage implements OnInit {
     });
   }
 
+  /**
+   * INICIALIZACIÓN DE LA PÁGINA
+   * 
+   * Se ejecuta al cargar la página y:
+   * 1. Obtiene el usuario actual
+   * 2. Valida el ID del anime desde la URL
+   * 3. Carga los detalles del anime
+   * 4. Carga las reseñas existentes
+   * 5. Verifica si el usuario ya reseñó este anime
+   */
   async ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
     
-    // Obtener y validar el ID del anime
+    // Obtener y validar el ID del anime desde la URL
     const idParam = this.route.snapshot.paramMap.get('id');
     console.log('ID recibido desde la URL:', idParam);
     
@@ -100,11 +131,21 @@ export class AnimeDetailPage implements OnInit {
     this.animeId = +idParam;
     console.log('ID de anime válido:', this.animeId);
     
+    // Cargar todos los datos necesarios
     await this.loadAnimeDetails();
     await this.loadReviews();
     await this.checkUserReview();
   }
 
+  /**
+   * CARGAR DETALLES DEL ANIME
+   * 
+   * Esta función obtiene la información completa de un anime desde la API:
+   * 1. Valida el ID del anime
+   * 2. Llama a la API de Jikan para obtener detalles
+   * 3. Si falla, crea datos de ejemplo para demostración
+   * 4. Maneja errores de conectividad y API
+   */
   async loadAnimeDetails() {
     this.loading = true;
     
@@ -119,6 +160,7 @@ export class AnimeDetailPage implements OnInit {
       console.log('Cargando detalles del anime ID:', this.animeId);
       console.log('URL de la API:', `https://api.jikan.moe/v4/anime/${this.animeId}`);
       
+      // Obtener detalles del anime desde la API
       const response = await this.apiService.getAnimeById(this.animeId).toPromise();
       console.log('Respuesta completa de la API:', response);
       console.log('Tipo de respuesta:', typeof response);
