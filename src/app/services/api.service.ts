@@ -64,7 +64,7 @@ export interface AnimeResponse {
 })
 export class ApiService {
   // URL base de la API de Jikan (MyAnimeList)
-  private baseUrl = 'https://api.jikan.moe/v1';
+  private baseUrl = 'https://api.jikan.moe/v3';
 
   constructor(private http: HttpClient) {}
 
