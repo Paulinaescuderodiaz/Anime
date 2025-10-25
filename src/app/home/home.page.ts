@@ -4,8 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../services/auth.service';
 import { ApiService, Anime } from '../services/api.service';
+import { AnimeApiService, AnimeData } from '../services/anime-api.service';
 import { CameraService, Photo } from '../services/camera.service';
 import { DatabaseService } from '../services/database';
+import { FallbackDataService } from '../services/fallback-data.service';
 import {
   IonChip, IonButton, IonIcon, IonCard, IonButtons,
   IonContent, IonHeader, IonMenu, IonMenuButton,
@@ -42,7 +44,7 @@ export class HomePage implements OnInit {
   // === PROPIEDADES PRINCIPALES ===
   
   // Lista de animes obtenidos de la API
-  animes: Anime[] = [];
+  animes: AnimeData[] = [];
   
   // Reseñas personalizadas del usuario actual
   customReviews: any[] = [];
@@ -66,8 +68,10 @@ export class HomePage implements OnInit {
     private authService: AuthService,
     private navCtrl: NavController,
     private apiService: ApiService,
+    private animeApiService: AnimeApiService,
     private cameraService: CameraService,
     private databaseService: DatabaseService,
+    private fallbackDataService: FallbackDataService,
     private toastCtrl: ToastController,
     private actionSheetCtrl: ActionSheetController,
     private alertCtrl: AlertController
@@ -104,14 +108,14 @@ export class HomePage implements OnInit {
   async loadAnimes() {
     this.loading = true;
     try {
-      // Obtener animes populares desde la API
-      const response = await this.apiService.getTopAnimes().toPromise();
-      console.log('Respuesta completa de la API:', response);
-      const allAnimes = response?.data || [];
-      console.log('Animes obtenidos:', allAnimes);
+      console.log('Cargando animes desde múltiples fuentes...');
       
-      // Limitar a exactamente 10 animes para mejor rendimiento
-      this.animes = allAnimes.slice(0, 10);
+      // Usar el nuevo servicio que intenta múltiples APIs
+      const animes = await this.animeApiService.getTopAnimes().toPromise();
+      console.log('Animes obtenidos:', animes);
+      
+      // Validar que animes no sea undefined y limitar a 10 animes
+      this.animes = animes ? animes.slice(0, 10) : [];
       console.log('Animes procesados:', this.animes);
       
       // Log de cada anime para verificar IDs (debug)
@@ -119,22 +123,29 @@ export class HomePage implements OnInit {
         console.log(`Anime ${index + 1}:`, {
           id: anime.id,
           title: anime.title,
-          type: typeof anime.id
+          rating: anime.rating,
+          source: 'API Externa'
         });
       });
       
-      // Agregar calificaciones de ejemplo si no las tienen
-      this.animes = this.animes.map(anime => ({
-        ...anime,
-        rating: anime.rating || Number((Math.random() * 2 + 3).toFixed(1)) // Calificación entre 3.0 y 5.0
-      }));
+      const toast = await this.toastCtrl.create({
+        message: `Cargados ${this.animes.length} animes exitosamente`,
+        duration: 2000,
+        color: 'success'
+      });
+      await toast.present();
       
     } catch (error) {
       console.error('Error cargando animes:', error);
+      
+      // Usar datos de ejemplo como fallback
+      console.log('Usando datos de ejemplo como fallback');
+      this.animes = this.fallbackDataService.getSampleAnimes();
+      
       const toast = await this.toastCtrl.create({
-        message: 'Error cargando animes',
-        duration: 2000,
-        color: 'danger'
+        message: 'Error cargando animes. Mostrando datos de ejemplo.',
+        duration: 3000,
+        color: 'warning'
       });
       await toast.present();
     } finally {
@@ -159,18 +170,33 @@ export class HomePage implements OnInit {
 
     this.loading = true;
     try {
-      // Buscar animes con el término ingresado
-      const response = await this.apiService.searchAnimes(this.searchQuery).toPromise();
-      const allAnimes = response?.data || [];
+      console.log('Buscando animes:', this.searchQuery);
       
-      // Limitar a exactamente 10 animes en la búsqueda también
-      this.animes = allAnimes.slice(0, 10);
+      // Usar el nuevo servicio de búsqueda
+      const animes = await this.animeApiService.searchAnimes(this.searchQuery).toPromise();
+      console.log('Resultados de búsqueda:', animes);
+      
+      // Validar que animes no sea undefined y limitar a 10 animes
+      this.animes = animes ? animes.slice(0, 10) : [];
+      
+      const toast = await this.toastCtrl.create({
+        message: `Encontrados ${this.animes.length} animes para "${this.searchQuery}"`,
+        duration: 2000,
+        color: 'success'
+      });
+      await toast.present();
+      
     } catch (error) {
       console.error('Error buscando animes:', error);
+      
+      // Usar búsqueda en datos de ejemplo como fallback
+      console.log('Usando búsqueda en datos de ejemplo como fallback');
+      this.animes = this.fallbackDataService.searchSampleAnimes(this.searchQuery);
+      
       const toast = await this.toastCtrl.create({
-        message: 'Error en la búsqueda',
-        duration: 2000,
-        color: 'danger'
+        message: 'Error en la búsqueda. Mostrando resultados de ejemplo.',
+        duration: 3000,
+        color: 'warning'
       });
       await toast.present();
     } finally {

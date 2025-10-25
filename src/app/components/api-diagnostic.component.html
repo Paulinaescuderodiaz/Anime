@@ -1,0 +1,92 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>
+      <ion-icon name="analytics" slot="start"></ion-icon>
+      Diagnóstico de APIs de Animes
+    </ion-card-title>
+  </ion-card-header>
+  
+  <ion-card-content>
+    <!-- Estado de carga -->
+    <div *ngIf="isRunning" class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Probando conectividad con APIs...</p>
+    </div>
+
+    <!-- Resultados del diagnóstico -->
+    <div *ngIf="!isRunning && results.length > 0">
+      
+      <!-- Resumen -->
+      <div class="summary">
+        <h3>📊 Resumen</h3>
+        <p><strong>API Recomendada:</strong> {{ recommendedApi }}</p>
+        <p><strong>APIs Probadas:</strong> {{ results.length }}</p>
+        <p><strong>APIs Disponibles:</strong> {{ results.filter(r => r.available).length }}</p>
+      </div>
+
+      <!-- Lista de APIs -->
+      <div class="api-list">
+        <h3>📡 Estado de APIs</h3>
+        <div *ngFor="let result of results" class="api-item">
+          <div class="api-header">
+            <ion-icon 
+              [name]="getStatusIcon(result.available)" 
+              [color]="getStatusColor(result.available)">
+            </ion-icon>
+            <span class="api-name">{{ result.name }}</span>
+            <span class="api-status" [color]="getStatusColor(result.available)">
+              {{ getStatusText(result.available) }}
+            </span>
+          </div>
+          
+          <div class="api-details">
+            <p><strong>Tiempo de respuesta:</strong> {{ formatTime(result.responseTime) }}</p>
+            <p *ngIf="result.error"><strong>Error:</strong> {{ result.error }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="actions">
+        <ion-button 
+          (click)="runDiagnostic()" 
+          fill="outline" 
+          color="primary">
+          <ion-icon name="refresh" slot="start"></ion-icon>
+          Probar Nuevamente
+        </ion-button>
+        
+        <ion-button 
+          (click)="toggleDetails()" 
+          fill="outline" 
+          color="secondary">
+          <ion-icon [name]="showDetails ? 'eye-off' : 'eye'" slot="start"></ion-icon>
+          {{ showDetails ? 'Ocultar' : 'Mostrar' }} Detalles
+        </ion-button>
+        
+        <ion-button 
+          (click)="copyReport()" 
+          fill="outline" 
+          color="tertiary">
+          <ion-icon name="copy" slot="start"></ion-icon>
+          Copiar Reporte
+        </ion-button>
+      </div>
+
+      <!-- Reporte detallado -->
+      <div *ngIf="showDetails" class="detailed-report">
+        <h3>📋 Reporte Detallado</h3>
+        <pre>{{ report }}</pre>
+      </div>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div *ngIf="!isRunning && results.length === 0" class="error-message">
+      <ion-icon name="warning" color="danger"></ion-icon>
+      <p>No se pudieron obtener resultados del diagnóstico.</p>
+      <ion-button (click)="runDiagnostic()" fill="solid" color="primary">
+        Intentar Nuevamente
+      </ion-button>
+    </div>
+  </ion-card-content>
+</ion-card>

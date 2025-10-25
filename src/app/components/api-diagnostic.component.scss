@@ -1,0 +1,141 @@
+.loading-container {
+  text-align: center;
+  padding: 2rem;
+  
+  ion-spinner {
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+  }
+}
+
+.summary {
+  background: var(--ion-color-light);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  
+  h3 {
+    margin-top: 0;
+    color: var(--ion-color-primary);
+  }
+  
+  p {
+    margin: 0.5rem 0;
+  }
+}
+
+.api-list {
+  margin-bottom: 1rem;
+  
+  h3 {
+    color: var(--ion-color-primary);
+    margin-bottom: 1rem;
+  }
+}
+
+.api-item {
+  border: 1px solid var(--ion-color-light);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  background: var(--ion-color-light-tint);
+}
+
+.api-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  
+  .api-name {
+    font-weight: bold;
+    flex: 1;
+  }
+  
+  .api-status {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+}
+
+.api-details {
+  margin-left: 2rem;
+  
+  p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  
+  ion-button {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
+.detailed-report {
+  background: var(--ion-color-dark);
+  color: var(--ion-color-light);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  
+  h3 {
+    margin-top: 0;
+    color: var(--ion-color-light);
+  }
+  
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+}
+
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  
+  ion-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    margin-bottom: 1rem;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .actions {
+    flex-direction: column;
+    
+    ion-button {
+      width: 100%;
+    }
+  }
+  
+  .api-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .api-details {
+    margin-left: 0;
+  }
+}
