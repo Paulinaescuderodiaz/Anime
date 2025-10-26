@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DatabaseService } from './database';
+import { GoogleAuthService } from './google-auth.service';
+import { User } from 'firebase/auth';
 
 /**
  * SERVICIO DE AUTENTICACIÓN
@@ -18,7 +20,10 @@ export class AuthService {
   // Usuario actualmente autenticado
   private currentUser: string | null = null;
 
-  constructor(private databaseService: DatabaseService) {
+  constructor(
+    private databaseService: DatabaseService,
+    private googleAuthService: GoogleAuthService
+  ) {
     // Verificar si hay sesión activa al inicializar el servicio
     const storedSession = localStorage.getItem('currentUser');
     if (storedSession) {
@@ -119,5 +124,59 @@ export class AuthService {
    */
   getCurrentUser(): string | null {
     return this.currentUser;
+  }
+
+  /**
+   * INICIAR SESIÓN CON GOOGLE
+   * 
+   * Autentica al usuario usando Google OAuth.
+   * @returns Promise<boolean> - true si el login fue exitoso
+   */
+  async loginWithGoogle(): Promise<boolean> {
+    try {
+      const user = await this.googleAuthService.signInWithGoogle();
+      
+      if (user && user.email) {
+        this.currentUser = user.email;
+        localStorage.setItem('currentUser', user.email);
+        
+        // Guardar información adicional del usuario
+        const userData = {
+          email: user.email,
+          name: user.displayName || 'Usuario',
+          photoURL: user.photoURL || '',
+          provider: 'google'
+        };
+        localStorage.setItem('userData', JSON.stringify(userData));
+        
+        console.log('Login con Google exitoso:', user.email);
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Error en login con Google:', error);
+      return false;
+    }
+  }
+
+  /**
+   * OBTENER DATOS DEL USUARIO
+   * 
+   * @returns any - Datos completos del usuario o null
+   */
+  getUserData(): any {
+    const userData = localStorage.getItem('userData');
+    return userData ? JSON.parse(userData) : null;
+  }
+
+  /**
+   * VERIFICAR SI ES USUARIO DE GOOGLE
+   * 
+   * @returns boolean - true si el usuario se autenticó con Google
+   */
+  isGoogleUser(): boolean {
+    const userData = this.getUserData();
+    return userData && userData.provider === 'google';
   }
 }

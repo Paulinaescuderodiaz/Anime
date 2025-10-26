@@ -1,29 +1,9 @@
 <ion-content>
+  <!-- Menú lateral -->
   <ion-menu contentId="main-content">
     <ion-header>
       <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button></ion-menu-button>
-        </ion-buttons>
-        
-        <ion-title class="app-title">NekoRate</ion-title>
-        
-        <div slot="end" class="user-section">
-          <ion-avatar class="user-avatar">
-            <img alt="Avatar del usuario" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
-          </ion-avatar>
-          <ion-label class="user-name">{{ currentUser }}</ion-label>
-        </div>
-      </ion-toolbar>
-      
-      <!-- Barra de búsqueda en toolbar separado -->
-      <ion-toolbar class="search-toolbar">
-        <ion-searchbar 
-          placeholder="Buscar anime..." 
-          class="custom-searchbar"
-          [(ngModel)]="searchQuery"
-          (ionInput)="searchAnimes()">
-        </ion-searchbar>
+        <ion-title>Menú</ion-title>
       </ion-toolbar>
     </ion-header>
     
@@ -33,6 +13,11 @@
         Agregar Reseña
       </ion-button>
       
+      <ion-button expand="block" fill="outline" (click)="goToMyReviews()">
+        <ion-icon name="list" slot="start"></ion-icon>
+        Mis Reseñas
+      </ion-button>
+      
       <ion-button expand="block" fill="outline" (click)="onLogout()">
         <ion-icon name="log-out" slot="start"></ion-icon>
         Cerrar Sesión
@@ -40,16 +25,28 @@
     </ion-content>
   </ion-menu>
 
+  <!-- Contenido principal -->
   <div class="ion-page" id="main-content">
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title class="menu">NekoRate</ion-title>
-        <ion-avatar slot="end" class="contenedor">
-          <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" class="avatar" />
-        </ion-avatar>
+        <ion-title>NekoRate</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="presentActionSheet()">
+            <ion-icon name="camera"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      
+      <!-- Barra de búsqueda -->
+      <ion-toolbar>
+        <ion-searchbar 
+          placeholder="Buscar anime..." 
+          [(ngModel)]="searchQuery"
+          (ionInput)="searchAnimes()">
+        </ion-searchbar>
       </ion-toolbar>
     </ion-header>
 
@@ -58,206 +55,221 @@
         <ion-refresher-content></ion-refresher-content>
       </ion-refresher>
 
-      <!-- Sección de Fotos -->
-      <div class="photos-section" *ngIf="photos.length > 0">
-        <h2 class="section-title">Mis Fotos</h2>
-        <div class="photos-grid">
-          <div class="photo-item" *ngFor="let photo of photos">
-            <img [src]="photo.webviewPath" alt="Foto capturada">
-            <ion-button 
-              fill="clear" 
-              color="danger" 
-              size="small"
-              (click)="deletePhoto(photo)">
-              <ion-icon name="trash"></ion-icon>
-            </ion-button>
+      <!-- Layout de dos columnas -->
+      <div class="main-layout">
+        <!-- Columna principal (izquierda) -->
+        <div class="main-content">
+          <!-- Sección de Fotos -->
+          <div class="photos-section" *ngIf="photos.length > 0">
+            <h2 class="section-title">Mis Fotos</h2>
+            <div class="photos-grid">
+              <div class="photo-item" *ngFor="let photo of photos">
+                <img [src]="photo.webviewPath" alt="Foto capturada">
+                <ion-button 
+                  fill="clear" 
+                  color="danger" 
+                  size="small"
+                  (click)="deletePhoto(photo)">
+                  <ion-icon name="trash"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Sección de Mis Reseñas -->
-      <div class="reviews-section" *ngIf="customReviews.length > 0">
-        <div class="section-header">
-          <h2 class="section-title">Mis Reseñas</h2>
-          <ion-button 
-            fill="clear" 
-            size="small" 
-            color="primary"
-            (click)="goToMyReviews()">
-            <ion-icon name="create" slot="start"></ion-icon>
-            Gestionar
-          </ion-button>
-        </div>
-        
-        <div class="reviews-slider" *ngIf="customReviews.length > 0">
-          <div class="slider-container">
-            <ion-card class="review-card" *ngFor="let review of customReviews">
-              <div class="card-image" *ngIf="review.photo">
-                <img [src]="review.photo.webviewPath" [alt]="review.animeTitle">
-                <div class="rating-overlay">
+          <!-- Sección de Mis Reseñas -->
+          <div class="reviews-section" *ngIf="customReviews.length > 0">
+            <div class="section-header">
+              <h2 class="section-title">Mis Reseñas</h2>
+              <ion-button 
+                fill="clear" 
+                size="small" 
+                color="primary"
+                (click)="goToMyReviews()">
+                <ion-icon name="create" slot="start"></ion-icon>
+                Gestionar
+              </ion-button>
+            </div>
+            
+            <div class="reviews-slider" *ngIf="customReviews.length > 0">
+              <div class="slider-container">
+                <ion-card class="review-card" *ngFor="let review of customReviews">
+                  <div class="card-image" *ngIf="review.photo">
+                    <img [src]="review.photo.webviewPath" [alt]="review.animeTitle">
+                    <div class="rating-overlay">
+                      <div class="stars">
+                        <ion-icon 
+                          *ngFor="let star of getStarsArray(review.calificacion)" 
+                          name="star" 
+                          color="warning">
+                        </ion-icon>
+                      </div>
+                      <span class="rating-number">{{ review.calificacion }}/5</span>
+                    </div>
+                  </div>
+                  
+                  <div class="card-content">
+                    <div class="review-header">
+                      <h3 class="anime-title">{{ review.animeTitle }}</h3>
+                      <div class="review-actions">
+                        <button 
+                          type="button"
+                          class="edit-btn"
+                          (click)="editReview(review)">
+                          ✏️ Editar
+                        </button>
+                        <button 
+                          type="button"
+                          class="delete-btn"
+                          (click)="deleteReview(review)">
+                          🗑️ Eliminar
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div class="review-meta">
+                      <span class="review-date">{{ formatDate(review.fecha) }}</span>
+                      <div class="stars-inline">
+                        <ion-icon 
+                          *ngFor="let star of getStarsArray(review.calificacion)" 
+                          name="star" 
+                          color="warning">
+                        </ion-icon>
+                      </div>
+                    </div>
+                    
+                    <p class="review-comment">{{ review.comentario }}</p>
+                  </div>
+                </ion-card>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección de Animes -->
+          <div class="animes-section">
+            <h2 class="section-title">Animes Populares</h2>
+            
+            <div *ngIf="loading" class="loading-container">
+              <ion-spinner name="crescent"></ion-spinner>
+              <p>Cargando animes...</p>
+            </div>
+
+            <div *ngIf="!loading && animes.length === 0" class="no-results">
+              <ion-icon name="sad-outline" size="large"></ion-icon>
+              <p>No se encontraron animes</p>
+            </div>
+
+            <ion-card class="anime-card" *ngFor="let anime of animes" (click)="goToAnimeDetail(anime.id)">
+              <div class="card-image">
+                <img [src]="anime.image" [alt]="anime.title" *ngIf="anime.image">
+                <div class="rating-overlay" *ngIf="anime.rating">
                   <div class="stars">
                     <ion-icon 
-                      *ngFor="let star of getStarsArray(review.calificacion)" 
+                      *ngFor="let star of getStarsArray(anime.rating)" 
                       name="star" 
                       color="warning">
                     </ion-icon>
                   </div>
-                  <span class="rating-number">{{ review.calificacion }}/5</span>
+                  <span class="rating-number">{{ anime.rating | number:'1.1-1' }}</span>
                 </div>
               </div>
               
               <div class="card-content">
-                <div class="review-header">
-                  <h3 class="anime-title">{{ review.animeTitle }}</h3>
-                  <div class="review-actions">
-                    <button 
-                      type="button"
-                      class="edit-btn"
-                      (click)="editReview(review)">
-                      ✏️ Editar
-                    </button>
-                    <button 
-                      type="button"
-                      class="delete-btn"
-                      (click)="deleteReview(review)">
-                      🗑️ Eliminar
-                    </button>
-                  </div>
+                <div class="categories" *ngIf="anime.genres && anime.genres.length > 0">
+                  <ion-chip 
+                    *ngFor="let genre of anime.genres.slice(0, 2)" 
+                    color="primary" 
+                    size="small">
+                    {{ genre.toUpperCase() }}
+                  </ion-chip>
                 </div>
                 
-                <div class="review-meta">
-                  <span class="review-date">{{ formatDate(review.fecha) }}</span>
-                  <div class="stars-inline">
-                    <ion-icon 
-                      *ngFor="let star of getStarsArray(review.calificacion)" 
-                      name="star" 
-                      color="warning">
-                    </ion-icon>
-                  </div>
+                <h3 class="anime-title">{{ anime.title }}</h3>
+                
+                <div class="meta-info" *ngIf="anime.year">
+                  <span class="year">{{ anime.year }}</span>
+                  <span class="status" *ngIf="anime.status">{{ anime.status }}</span>
                 </div>
                 
-                <p class="review-comment">{{ review.comentario }}</p>
+                <p class="description" *ngIf="anime.description">
+                  {{ anime.description | slice:0:150 }}{{ (anime.description && anime.description.length > 150) ? '...' : '' }}
+                </p>
+                
+                <ion-button fill="clear" class="read-more-btn">
+                  Ver detalles
+                  <ion-icon name="arrow-forward" slot="end"></ion-icon>
+                </ion-button>
               </div>
             </ion-card>
           </div>
         </div>
-      </div>
 
-      <!-- Sección de Animes -->
-      <div class="animes-section">
-        <h2 class="section-title">Animes Populares</h2>
-        
-        <div *ngIf="loading" class="loading-container">
-          <ion-spinner name="crescent"></ion-spinner>
-          <p>Cargando animes...</p>
-        </div>
-
-        <div *ngIf="!loading && animes.length === 0" class="no-results">
-          <ion-icon name="sad-outline" size="large"></ion-icon>
-          <p>No se encontraron animes</p>
-        </div>
-
-        <ion-card class="anime-card" *ngFor="let anime of animes" (click)="goToAnimeDetail(anime.id)">
-          <div class="card-image">
-            <img [src]="anime.image" [alt]="anime.title" *ngIf="anime.image">
-            <div class="rating-overlay" *ngIf="anime.rating">
-              <div class="stars">
-                <ion-icon 
-                  *ngFor="let star of getStarsArray(anime.rating)" 
-                  name="star" 
-                  color="warning">
-                </ion-icon>
-              </div>
-              <span class="rating-number">{{ anime.rating | number:'1.1-1' }}</span>
-            </div>
-          </div>
-          
-          <div class="card-content">
-            <div class="categories" *ngIf="anime.genres && anime.genres.length > 0">
-              <ion-chip 
-                *ngFor="let genre of anime.genres.slice(0, 2)" 
-                color="primary" 
-                size="small">
-                {{ genre.toUpperCase() }}
-              </ion-chip>
-            </div>
-            
-            <h3 class="anime-title">{{ anime.title }}</h3>
-            
-            <div class="meta-info" *ngIf="anime.year">
-              <span class="year">{{ anime.year }}</span>
-              <span class="status" *ngIf="anime.status">{{ anime.status }}</span>
-            </div>
-            
-            <p class="description" *ngIf="anime.description">
-              {{ anime.description | slice:0:150 }}{{ (anime.description && anime.description.length > 150) ? '...' : '' }}
+        <!-- Sidebar (derecha) -->
+        <div class="sidebar">
+          <!-- Sección de información adicional -->
+          <div class="info-section">
+            <h3 class="sidebar-title">NekoRate</h3>
+            <p class="sidebar-description">
+              NekoRate es tu plataforma de confianza para descubrir, calificar y compartir 
+              tus animes favoritos. Encuentra reseñas auténticas de la comunidad otaku 
+              y descubre nuevas series que se adapten a tus gustos.
             </p>
-            
-            <ion-button fill="clear" class="read-more-btn">
-              Ver detalles
-              <ion-icon name="arrow-forward" slot="end"></ion-icon>
-            </ion-button>
+            <div class="contact-info">
+              <h4>¿Tienes dudas?</h4>
+              <p>Puedes contactarnos a través de:</p>
+              <ul>
+                <li>📧 Email: contacto&#64;nekorate.com</li>
+                <li>🐦 Twitter: &#64;NekoRateApp</li>
+                <li>📱 Facebook: NekoRate Oficial</li>
+              </ul>
+            </div>
+            <div class="spoiler-policy">
+              <p class="spoiler-warning">
+                ⚠️ <strong>Política de Spoilers:</strong><br>
+                Nuestras reseñas no contienen spoilers. En caso de haberlos, 
+                lo indicamos claramente con una advertencia.
+              </p>
+            </div>
           </div>
-        </ion-card>
+
+          <!-- Sección de estadísticas -->
+          <div class="stats-section">
+            <h3 class="sidebar-title">Estadísticas</h3>
+            <div class="stat-item">
+              <span class="stat-number">{{ animes.length }}</span>
+              <span class="stat-label">Animes Disponibles</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">{{ customReviews.length }}</span>
+              <span class="stat-label">Tus Reseñas</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">{{ photos.length }}</span>
+              <span class="stat-label">Fotos Capturadas</span>
+            </div>
+          </div>
+
+          <!-- Sección de enlaces útiles -->
+          <div class="links-section">
+            <h3 class="sidebar-title">Enlaces Útiles</h3>
+            <div class="link-item">
+              <ion-icon name="calendar" color="primary"></ion-icon>
+              <span>Calendario de Temporadas</span>
+            </div>
+            <div class="link-item">
+              <ion-icon name="trending-up" color="primary"></ion-icon>
+              <span>Animes Trending</span>
+            </div>
+            <div class="link-item">
+              <ion-icon name="people" color="primary"></ion-icon>
+              <span>Comunidad Otaku</span>
+            </div>
+            <div class="link-item">
+              <ion-icon name="book" color="primary"></ion-icon>
+              <span>Guía de Géneros</span>
+            </div>
+          </div>
+        </div>
       </div>
     </ion-content>
-  </div>
-
-  <!-- Sección de Reseñas de Otros Usuarios -->
-  <div class="other-reviews-section" *ngIf="otherUsersReviews.length > 0">
-    <div class="section-header">
-      <h2 class="section-title">Reseñas de la Comunidad</h2>
-      <ion-button 
-        fill="clear" 
-        size="small" 
-        color="primary"
-        (click)="refreshOtherReviews()">
-        <ion-icon name="refresh" slot="start"></ion-icon>
-        Actualizar
-      </ion-button>
-    </div>
-    
-    <div class="other-reviews-slider">
-      <div class="slider-container">
-        <ion-card class="other-review-card" *ngFor="let review of otherUsersReviews">
-          <div class="card-image" *ngIf="review.photo">
-            <img [src]="review.photo.webviewPath" [alt]="review.animeTitle">
-            <div class="rating-overlay">
-              <div class="stars">
-                <ion-icon 
-                  *ngFor="let star of getStarsArray(review.calificacion)" 
-                  name="star" 
-                  color="warning">
-                </ion-icon>
-              </div>
-              <span class="rating-number">{{ review.calificacion }}/5</span>
-            </div>
-          </div>
-          
-          <div class="card-content">
-            <div class="review-header">
-              <h3 class="anime-title">{{ review.animeTitle }}</h3>
-              <div class="user-info">
-                <ion-icon name="person" size="small"></ion-icon>
-                <span class="user-email">{{ review.userEmail }}</span>
-              </div>
-            </div>
-            
-            <div class="review-meta">
-              <span class="review-date">{{ formatDate(review.fecha) }}</span>
-              <div class="stars-inline">
-                <ion-icon 
-                  *ngFor="let star of getStarsArray(review.calificacion)" 
-                  name="star" 
-                  color="warning">
-                </ion-icon>
-              </div>
-            </div>
-            
-            <p class="review-comment">{{ review.comentario }}</p>
-          </div>
-        </ion-card>
-      </div>
-    </div>
   </div>
 </ion-content>

@@ -1,0 +1,94 @@
+/**
+ * TEMA VERDE AGUA PASTEL
+ * 
+ * Este archivo define los colores y estilos para el tema verde agua pastel
+ * de la aplicación de anime.
+ */
+
+// Variables de colores del tema verde agua pastel
+:root {
+  // Colores principales
+  --aqua-primary: #4ecdc4;        // Verde agua principal
+  --aqua-secondary: #44a08d;      // Verde agua secundario
+  --aqua-accent: #7dd3fc;         // Azul agua acento
+  --aqua-light: #a7f3d0;          // Verde agua claro
+  --aqua-pastel: #bfdbfe;         // Azul agua pastel
+  
+  // Colores de fondo
+  --bg-primary: linear-gradient(135deg, #a7f3d0 0%, #7dd3fc 50%, #4ecdc4 100%);
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-section: rgba(255, 255, 255, 0.9);
+  
+  // Colores de texto
+  --text-primary: #2c3e50;
+  --text-secondary: #7f8c8d;
+  --text-light: #ffffff;
+  
+  // Colores de borde
+  --border-primary: #a7f3d0;
+  --border-secondary: #7dd3fc;
+  
+  // Sombras
+  --shadow-light: 0 4px 15px rgba(78, 205, 196, 0.2);
+  --shadow-medium: 0 8px 25px rgba(78, 205, 196, 0.3);
+  --shadow-heavy: 0 15px 40px rgba(78, 205, 196, 0.4);
+}
+
+// Clases de utilidad para el tema
+.aqua-gradient {
+  background: var(--bg-primary);
+}
+
+.aqua-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-light);
+  border-radius: 15px;
+}
+
+.aqua-section {
+  background: var(--bg-section);
+  border: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-light);
+  border-radius: 15px;
+}
+
+.aqua-text-primary {
+  color: var(--text-primary);
+}
+
+.aqua-text-secondary {
+  color: var(--text-secondary);
+}
+
+.aqua-button {
+  --background: var(--aqua-primary);
+  --color: var(--text-light);
+  --border-radius: 25px;
+  --box-shadow: var(--shadow-light);
+}
+
+.aqua-chip {
+  --background: var(--aqua-primary);
+  --color: var(--text-light);
+  --border-radius: 15px;
+}
+
+// Animaciones del tema
+@keyframes aqua-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes aqua-glow {
+  0%, 100% { box-shadow: var(--shadow-light); }
+  50% { box-shadow: var(--shadow-medium); }
+}
+
+.aqua-float {
+  animation: aqua-float 3s ease-in-out infinite;
+}
+
+.aqua-glow {
+  animation: aqua-glow 2s ease-in-out infinite;
+}

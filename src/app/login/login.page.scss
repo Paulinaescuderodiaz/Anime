@@ -177,3 +177,45 @@ custom-content {
   text-align: center;
   margin: 16px 0;
 }
+
+// Estilos para el botón de Google
+.google-button {
+  --background: #ffffff;
+  --color: #333333;
+  --border-color: #dadce0;
+  --border-width: 1px;
+  --border-style: solid;
+  margin: 10px 0;
+  
+  &:hover {
+    --background: #f8f9fa;
+    --border-color: #c1c1c1;
+  }
+  
+  ion-icon {
+    color: #4285f4;
+    margin-right: 8px;
+  }
+}
+
+// Divider entre opciones de login
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+  
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e0e0e0;
+  }
+  
+  span {
+    padding: 0 15px;
+    color: #666;
+    font-size: 14px;
+    background: var(--ion-background-color);
+  }
+}

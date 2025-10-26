@@ -157,4 +157,42 @@ export class LoginPage {
 
     this.closeForgotPasswordModal();
   }
+
+  /**
+   * INICIAR SESIÓN CON GOOGLE
+   * 
+   * Autentica al usuario usando Google OAuth.
+   */
+  async onGoogleLogin() {
+    try {
+      const success = await this.authService.loginWithGoogle();
+      
+      if (success) {
+        const toast = await this.toastCtrl.create({
+          message: '¡Bienvenido! Sesión iniciada con Google',
+          duration: 2000,
+          color: 'success'
+        });
+        await toast.present();
+        
+        // Navegar a la página principal
+        this.navCtrl.navigateRoot('/home');
+      } else {
+        const toast = await this.toastCtrl.create({
+          message: 'Error al iniciar sesión con Google',
+          duration: 2000,
+          color: 'danger'
+        });
+        await toast.present();
+      }
+    } catch (error) {
+      console.error('Error en login con Google:', error);
+      const toast = await this.toastCtrl.create({
+        message: 'Error al conectar con Google',
+        duration: 2000,
+        color: 'danger'
+      });
+      await toast.present();
+    }
+  }
 }

@@ -34,6 +34,17 @@
       ¿Olvidaste tu contraseña?
     </div>
 
+    <!-- Divider -->
+    <div class="divider">
+      <span>o</span>
+    </div>
+
+    <!-- Google Login Button -->
+    <ion-button expand="block" fill="outline" (click)="onGoogleLogin()" class="google-button">
+      <ion-icon name="logo-google" slot="start"></ion-icon>
+      Continuar con Google
+    </ion-button>
+
     <ion-button expand="full" fill="clear" (click)="goToRegister()">
       Registrarse
     </ion-button>

@@ -1,159 +1,289 @@
+// Estilos simplificados y limpios para la aplicación de anime
+@import '../theme/pastel-aqua-theme.scss';
+
+// Variables de colores - Verde agua pastel
+:root {
+  --primary-color: #4ecdc4;
+  --secondary-color: #44a08d;
+  --accent-color: #7dd3fc;
+  --text-primary: #2c3e50;
+  --text-secondary: #7f8c8d;
+  --background-light: #f0fdfa;
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --border-color: #a7f3d0;
+  --pastel-green: #a7f3d0;
+  --pastel-blue: #bfdbfe;
+}
+
 // Estilos generales
+ion-content {
+  --background: linear-gradient(135deg, #a7f3d0 0%, #7dd3fc 50%, #4ecdc4 100%);
+  min-height: 100vh;
+}
 
+// Layout de dos columnas
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
 
+.main-content {
+  min-width: 0; // Permite que el contenido se contraiga
+}
 
-// Estilos para el header
+.sidebar {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 20px;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.2);
+  border: 1px solid var(--border-color);
+}
+
+// Header
 ion-header {
   ion-toolbar {
-    --background: #667eea;
+    --background: var(--primary-color);
     --color: white;
     
-    .app-title {
-      color: white;
+    ion-title {
       font-weight: bold;
       text-align: center;
     }
+  }
+}
+
+// Barra de búsqueda
+ion-searchbar {
+  --background: rgba(255, 255, 255, 0.95);
+  --border-radius: 25px;
+  --placeholder-color: var(--text-secondary);
+  --icon-color: var(--primary-color);
+  margin: 10px;
+}
+
+// Sección de animes
+.animes-section {
+  padding: 20px 0;
+  
+  .section-title {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  .anime-card {
+    margin: 0 0 20px 0;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background: var(--card-bg);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    max-width: 100%;
     
-    .user-section {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-image {
+      position: relative;
+      height: 280px;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 15px;
       
-      .user-avatar {
-        width: 35px;
-        height: 35px;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 15px;
+      }
+      
+      .rating-overlay {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: bold;
         
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
+        .stars {
+          display: inline-flex;
+          gap: 2px;
+          
+          ion-icon {
+            color: #ffd700;
+            font-size: 12px;
+          }
+        }
+      }
+    }
+    
+    .card-content {
+      padding: 20px;
+      
+      .categories {
+        margin-bottom: 15px;
+        
+        ion-chip {
+          margin-right: 8px;
+          margin-bottom: 8px;
+          --background: var(--primary-color);
+          --color: white;
+          font-size: 13px;
         }
       }
       
-      .user-name {
-        color: white;
-        font-size: 14px;
-        font-weight: 500;
+      .anime-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 10px 0;
+        color: var(--text-primary);
       }
-    
-    }
-  }
-  
-  .search-toolbar {
-    --background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    padding: 15px;
-    border-radius: 0 0 25px 25px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    
-    .custom-searchbar {
-      --background: var(--glass-bg);
-      --color: var(--text-primary);
-      --placeholder-color: var(--text-muted);
-      --icon-color: var(--blue-primary);
-      --border-radius: 25px;
-      --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-      transition: all 0.3s ease;
       
-      &:focus-within {
-        --box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
-        transform: translateY(-2px);
-        border: 1px solid var(--blue-primary);
+      .meta-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: var(--text-secondary);
+        
+        .year {
+          font-weight: bold;
+        }
+        
+        .status {
+          background: var(--primary-color);
+          color: white;
+          padding: 2px 8px;
+          border-radius: 10px;
+          font-size: 12px;
+        }
+      }
+      
+      .description {
+        color: var(--text-secondary);
+        line-height: 1.4;
+        margin-bottom: 15px;
+        font-size: 14px;
+      }
+      
+      .read-more-btn {
+        --color: var(--primary-color);
+        font-weight: bold;
       }
     }
   }
 }
 
-ion-searchbar {
-  --background: #f4f4f45f;
-  --border-radius: 10px;
-  margin: 5px;
-  width: 20%;
-  --placeholder-color: #8c8c8c;
-  --icon-color: #8c8c8c;
-
-}
-
-ion-card {
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin: 40px;
-  padding: 20px;
-  width: auto;
-  display: flex;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-}
-
-ion-card img {
-  width: 20%;
-  height: auto;
-  border-radius: 30px;
-  margin-bottom: 15px;
-}
-.main-background {
-  background-image: url('src/assets/img/3.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  min-height: 100vh;
-}.section-title {
-  text-align: center;
-  color: white;
-  font-size: 24px;
-  font-weight: bold;
-  margin: 20px 0;
-}
-
-// Estilos generales de la página - Tema Oscuro
-ion-content {
-  --background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-  min-height: 100vh;
-  color: #ffffff;
-}
-
-// Variables de colores del tema oscuro
-:root {
-  --dark-bg: #0f0f23;
-  --dark-secondary: #1a1a2e;
-  --dark-accent: #16213e;
-  --blue-primary: #3b82f6;
-  --blue-secondary: #1d4ed8;
-  --blue-accent: #60a5fa;
-  --text-primary: #ffffff;
-  --text-secondary: #e5e7eb;
-  --text-muted: #d1d5db;
-  --glass-bg: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.2);
-}
-
-// Estilos para las fotos - Tema Oscuro
-.photos-section {
+// Sección de reseñas
+.reviews-section {
   margin-bottom: 30px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
   padding: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
   
   .section-title {
-    color: var(--text-primary);
-    font-weight: 700;
-    margin-bottom: 20px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  .review-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    
+    .card-image {
+      position: relative;
+      height: 150px;
+      overflow: hidden;
+      
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .rating-overlay {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+    }
+    
+    .card-content {
+      padding: 15px;
+      
+      .anime-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: var(--text-primary);
+      }
+      
+      .review-meta {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+      
+      .review-comment {
+        color: var(--text-secondary);
+        line-height: 1.4;
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+// Sección de fotos
+.photos-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  
+  .section-title {
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   }
   
   .photos-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 15px;
-    margin-top: 15px;
     
     .photo-item {
       position: relative;
@@ -173,620 +303,15 @@ ion-content {
         right: 5px;
         --background: rgba(255, 255, 255, 0.9);
         --color: #dc3545;
+        --border-radius: 50%;
+        width: 30px;
+        height: 30px;
       }
     }
   }
 }
 
-// Estilos para las reseñas personalizadas - Tema Oscuro
-.reviews-section {
-  margin-bottom: 40px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  position: relative;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, var(--blue-primary) 0%, var(--blue-secondary) 100%);
-    opacity: 0.1;
-    border-radius: 20px;
-    z-index: -1;
-  }
-  
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    
-    .section-title {
-      margin: 0;
-      color: var(--text-primary);
-      font-size: 24px;
-      font-weight: 700;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-      background: linear-gradient(135deg, var(--blue-primary) 0%, var(--blue-accent) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    ion-button {
-      --background: #F5F5DC; // Color beige
-      --color: #2c2c2c; // Texto oscuro para contraste
-      --border-radius: 25px;
-      --padding-start: 16px;
-      --padding-end: 16px;
-      backdrop-filter: blur(10px);
-      border: 2px solid #D2B48C; // Borde beige más oscuro
-      box-shadow: 0 4px 15px rgba(245, 245, 220, 0.3);
-      font-weight: 600;
-      
-      &:hover {
-        --background: #E6E6D4; // Beige más oscuro al hover
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(245, 245, 220, 0.4);
-        border: 2px solid #C4A484; // Borde más oscuro al hover
-      }
-    }
-  }
-  
-  .reviews-slider {
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding: 0 10px;
-    max-width: 100%;
-    
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    
-    .slider-container {
-      display: flex;
-      gap: 15px;
-      padding: 0 0 10px 0;
-      width: max-content;
-      min-width: 100%;
-      justify-content: flex-start; // Alinear a la izquierda
-    }
-  }
-  
-  .review-card {
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    flex: 0 0 60%; // 60% del ancho de la pantalla
-    max-width: 60%;
-    width: 60%; // Forzar el ancho al 60%
-    background: rgba(255, 255, 255, 0.8); // MUY claro para móvil
-    backdrop-filter: blur(20px);
-    border: 2px solid rgba(255, 255, 255, 0.9);
-    
-    &:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-      border: 1px solid var(--blue-primary);
-    }
-    
-    .card-image {
-      position: relative;
-      height: 200px;
-      overflow: hidden;
-      
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      
-      .rating-overlay {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 8px 12px;
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        font-weight: bold;
-        font-size: 14px;
-        
-        .stars {
-          display: flex;
-          gap: 2px;
-          
-          ion-icon {
-            color: #ffd700;
-            font-size: 14px;
-          }
-        }
-        
-        .rating-number {
-          margin-left: 5px;
-          font-size: 12px;
-          color: #ffd700;
-        }
-      }
-    }
-    
-    .card-content {
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.6); // MUY claro para móvil
-      backdrop-filter: blur(10px);
-      
-      .review-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-        
-        .anime-title {
-          font-size: 18px;
-          font-weight: bold;
-          margin: 0;
-          color: #1a1a1a; // Texto oscuro para contraste
-          flex: 1;
-          margin-right: 10px;
-          text-shadow: none; // Sin sombra para mejor legibilidad
-        }
-        
-        .review-actions {
-          display: flex;
-          gap: 8px;
-          flex-shrink: 0;
-          
-          button {
-            border: none;
-            border-radius: 12px;
-            padding: 10px 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            
-            &:hover {
-              transform: translateY(-2px) scale(1.05);
-              box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-            }
-            
-            &:active {
-              transform: translateY(0) scale(0.95);
-            }
-          }
-          
-          .edit-btn {
-            background: linear-gradient(135deg, var(--blue-primary) 0%, var(--blue-secondary) 100%);
-            color: white;
-            border: 1px solid var(--blue-secondary);
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-            
-            &:hover {
-              background: linear-gradient(135deg, var(--blue-secondary) 0%, var(--blue-primary) 100%);
-              box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-            }
-          }
-          
-          .delete-btn {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            border: 1px solid #dc2626;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-            
-            &:hover {
-              background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-              box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
-            }
-          }
-        }
-      }
-      
-      .anime-title {
-        font-size: 18px;
-        font-weight: bold;
-        margin: 0 0 10px 0;
-        color: var(--ion-color-primary);
-      }
-      
-      .review-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-        
-        .review-date {
-          font-size: 12px;
-          color: #4a4a4a; // Texto oscuro para contraste
-        }
-        
-        .stars-inline {
-          display: flex;
-          gap: 2px;
-          
-          ion-icon {
-            color: #ffd700;
-            font-size: 14px;
-          }
-        }
-      }
-      
-      .review-comment {
-        font-size: 14px;
-        line-height: 1.4;
-        color: #2a2a2a; // Texto oscuro para contraste
-        margin: 0;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-shadow: none; // Sin sombra para mejor legibilidad
-      }
-    }
-  }
-}
-
-// Estilos para las reseñas de otros usuarios
-.other-reviews-section {
-  margin-top: 30px;
-  padding: 20px 0;
-  
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    
-    .section-title {
-      margin: 0;
-      color: white;
-      font-size: 24px;
-      font-weight: 700;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-      background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    ion-button {
-      --background: var(--blue-primary);
-      --color: white;
-      --border-radius: 25px;
-      --padding-start: 16px;
-      --padding-end: 16px;
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--blue-secondary);
-      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-      
-      &:hover {
-        --background: var(--blue-secondary);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-      }
-    }
-  }
-  
-  .other-reviews-slider {
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding: 0 10px;
-    max-width: 100%;
-    
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    
-    .slider-container {
-      display: flex;
-      gap: 15px;
-      padding: 0 0 10px 0;
-      width: max-content;
-      min-width: 100%;
-      justify-content: flex-start;
-    }
-  }
-  
-  .other-review-card {
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    flex: 0 0 60%; // 60% del ancho de la pantalla
-    max-width: 60%;
-    width: 60%; // Forzar el ancho al 60%
-    background: rgba(255, 255, 255, 0.9); // Más claro para distinguir de las propias
-    backdrop-filter: blur(20px);
-    border: 2px solid rgba(255, 255, 255, 0.9);
-    
-    &:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-      border: 2px solid var(--blue-primary);
-    }
-    
-    .card-image {
-      position: relative;
-      height: 200px;
-      overflow: hidden;
-      
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      
-      .rating-overlay {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 8px 12px;
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        font-weight: bold;
-        font-size: 14px;
-        
-        .stars {
-          display: flex;
-          gap: 2px;
-          
-          ion-icon {
-            color: #ffd700;
-            font-size: 14px;
-          }
-        }
-        
-        .rating-number {
-          margin-left: 5px;
-          font-size: 12px;
-          color: #ffd700;
-        }
-      }
-    }
-    
-    .card-content {
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.7); // Fondo más claro
-      backdrop-filter: blur(10px);
-      
-      .review-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 10px;
-        
-        .anime-title {
-          font-size: 18px;
-          font-weight: bold;
-          margin: 0;
-          color: #2c2c2c; // Texto oscuro para contraste
-          flex: 1;
-          margin-right: 10px;
-        }
-        
-        .user-info {
-          display: flex;
-          align-items: center;
-          gap: 5px;
-          font-size: 12px;
-          color: #666;
-          
-          ion-icon {
-            color: #666;
-          }
-          
-          .user-email {
-            font-weight: 500;
-            color: #4a4a4a;
-          }
-        }
-      }
-      
-      .review-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-        
-        .review-date {
-          font-size: 12px;
-          color: #4a4a4a; // Texto oscuro para contraste
-        }
-        
-        .stars-inline {
-          display: flex;
-          gap: 2px;
-          
-          ion-icon {
-            color: #ffd700;
-            font-size: 14px;
-          }
-        }
-      }
-      
-      .review-comment {
-        font-size: 14px;
-        line-height: 1.4;
-        color: #2a2a2a; // Texto oscuro para contraste
-        margin: 0;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-    }
-  }
-}
-
-// Estilos para los animes - Tema Oscuro
-.animes-section {
-  .section-title {
-    color: white; // Más claro
-    font-size: 28px;
-    font-weight: 800;
-    margin-bottom: 25px;
-    text-align: center;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-    background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  
-  // Layout en filas hacia abajo (una sola columna)
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 0 10px;
-  
-  .anime-card {
-    margin: 0;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    background: #F5F5DC; // Color beige
-    backdrop-filter: blur(20px);
-    border: 1px solid #D2B48C; // Borde beige más oscuro
-    width: 100%;
-    max-width: 100%;
-    
-    &:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-      border: 1px solid var(--blue-primary);
-    }
-    
-    .card-image {
-      position: relative;
-      height: 200px;
-      overflow: hidden;
-      
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      
-      .rating-overlay {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 8px 12px;
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        font-weight: bold;
-        font-size: 14px;
-        
-        .stars {
-          display: flex;
-          gap: 2px;
-          
-          ion-icon {
-            color: #ffd700;
-            font-size: 14px;
-          }
-        }
-        
-        .rating-number {
-          margin-left: 5px;
-          font-size: 12px;
-          color: #ffd700;
-        }
-      }
-    }
-    
-    .card-content {
-      padding: 20px;
-      background: rgba(245, 245, 220, 0.8); // Fondo beige translúcido
-      backdrop-filter: blur(10px);
-      
-      .categories {
-        margin-bottom: 10px;
-        
-        ion-chip {
-          margin-right: 5px;
-          margin-bottom: 5px;
-          --background: var(--blue-primary);
-          --color: white;
-        }
-      }
-      
-      .anime-title {
-        font-size: 18px;
-        font-weight: bold;
-        margin: 10px 0;
-        color: #2c2c2c; // Texto oscuro para contraste con beige
-        text-shadow: none; // Sin sombra para mejor legibilidad
-      }
-      
-      .meta-info {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-        font-size: 14px;
-        color: #4a4a4a; // Texto oscuro para contraste con beige
-        text-shadow: none; // Sin sombra para mejor legibilidad
-        
-        .year {
-          font-weight: bold;
-          color: #2c2c2c; // Texto oscuro para contraste
-        }
-        
-        .status {
-          background: var(--blue-primary);
-          color: white;
-          padding: 2px 8px;
-          border-radius: 10px;
-          font-size: 12px;
-          text-shadow: none;
-        }
-      }
-      
-      .description {
-        color: #4a4a4a; // Texto oscuro para contraste con beige
-        line-height: 1.4;
-        margin-bottom: 15px;
-        text-shadow: none; // Sin sombra para mejor legibilidad
-      }
-      
-      .read-more-btn {
-        --color: var(--blue-primary);
-        font-weight: bold;
-        text-shadow: none; // Sin sombra para mejor legibilidad
-      }
-    }
-  }
-}
-
-// Estados de carga y sin resultados
+// Estados de carga
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -811,5 +336,237 @@ ion-content {
   ion-icon {
     margin-bottom: 15px;
     opacity: 0.7;
+  }
+}
+
+// Estilos adicionales para el tema verde agua pastel
+.anime-card {
+  .card-content {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--border-color);
+    
+    .anime-title {
+      color: var(--text-primary);
+      font-weight: bold;
+    }
+    
+    .description {
+      color: var(--text-secondary);
+    }
+    
+    .meta-info {
+      .year {
+        color: var(--primary-color);
+        font-weight: bold;
+      }
+      
+      .status {
+        background: var(--primary-color);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+// Mejorar la transparencia de las secciones
+.reviews-section,
+.photos-section {
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.2);
+}
+
+// Estilos del sidebar
+.sidebar {
+  .sidebar-title {
+    color: var(--primary-color);
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .sidebar-description {
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  
+  .contact-info {
+    margin-bottom: 20px;
+    
+    h4 {
+      color: var(--text-primary);
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    
+    p {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    
+    ul {
+      list-style: none;
+      padding: 0;
+      
+      li {
+        color: var(--text-secondary);
+        font-size: 13px;
+        margin-bottom: 5px;
+        padding-left: 10px;
+      }
+    }
+  }
+  
+  .spoiler-policy {
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    
+    .spoiler-warning {
+      color: #856404;
+      font-size: 13px;
+      margin: 0;
+      line-height: 1.4;
+    }
+  }
+  
+  .stats-section {
+    margin-bottom: 20px;
+    
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(78, 205, 196, 0.2);
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      .stat-number {
+        color: var(--primary-color);
+        font-size: 18px;
+        font-weight: bold;
+      }
+      
+      .stat-label {
+        color: var(--text-secondary);
+        font-size: 14px;
+      }
+    }
+  }
+  
+  .links-section {
+    .link-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(78, 205, 196, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      &:hover {
+        background: rgba(78, 205, 196, 0.1);
+        border-radius: 8px;
+        padding-left: 10px;
+      }
+      
+      ion-icon {
+        font-size: 18px;
+      }
+      
+      span {
+        color: var(--text-secondary);
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 1200px) {
+  .main-layout {
+    grid-template-columns: 1fr 250px;
+    gap: 15px;
+    max-width: 1200px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .sidebar {
+    position: static;
+    order: -1; // Mover sidebar arriba en móviles
+  }
+}
+
+@media (max-width: 768px) {
+  .main-layout {
+    padding: 0 5px;
+  }
+  
+  .sidebar {
+    padding: 15px;
+    
+    .sidebar-title {
+      font-size: 18px;
+    }
+    
+    .sidebar-description {
+      font-size: 13px;
+    }
+  }
+  
+  .animes-section {
+    padding: 15px 5px;
+    
+    .anime-card {
+      margin: 0 0 15px 0;
+      
+      .card-image {
+        height: 200px;
+        width: 200px;
+      }
+      
+      .card-content {
+        padding: 12px;
+        
+        .anime-title {
+          font-size: 16px;
+        }
+        
+        .description {
+          font-size: 13px;
+        }
+      }
+    }
+  }
+  
+  .reviews-section,
+  .photos-section {
+    padding: 15px;
+    
+    .section-title {
+      font-size: 18px;
+    }
   }
 }
