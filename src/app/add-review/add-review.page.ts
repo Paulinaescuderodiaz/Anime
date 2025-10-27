@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ReviewService } from '../services/review.service';
 import { AuthService } from '../services/auth.service';
 import { CameraService, Photo } from '../services/camera.service';
+import { DatabaseService } from '../services/database';
 import {
   IonBackButton, IonButton, IonCard, IonCardContent, IonCardHeader, 
   IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, 
@@ -13,7 +14,6 @@ import {
 } from '@ionic/angular/standalone';
 
 /**
- * PÁGINA PARA AGREGAR RESEÑAS
  * ===================================================================================
  * PÁGINA DE CREACIÓN DE RESEÑAS - AddReviewPage
  * ===================================================================================
