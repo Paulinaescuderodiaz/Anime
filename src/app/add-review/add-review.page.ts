@@ -14,14 +14,50 @@ import {
 
 /**
  * PÁGINA PARA AGREGAR RESEÑAS
+ * ===================================================================================
+ * PÁGINA DE CREACIÓN DE RESEÑAS - AddReviewPage
+ * ===================================================================================
  * 
- * Esta página permite a los usuarios crear nuevas reseñas de animes:
- * - Formulario para ingresar título del anime
- * - Sistema de calificación con estrellas
- * - Campo de comentario
- * - Funcionalidad de cámara para agregar fotos
- * - Validación de formulario
- * - Guardado en localStorage por usuario
+ * DESCRIPCIÓN GENERAL:
+ * Esta página permite a los usuarios crear nuevas reseñas de animes con un sistema
+ * completo de formularios, calificaciones, comentarios y captura de fotos.
+ * 
+ * FUNCIONALIDADES PRINCIPALES:
+ * 1. Formulario de reseña con validación completa
+ * 2. Sistema de calificación con estrellas (1-5)
+ * 3. Campo de comentario extenso
+ * 4. Captura de fotos con cámara del dispositivo
+ * 5. Selección de imágenes de galería
+ * 6. Guardado en SQLite con fallback a localStorage
+ * 7. Creación automática de animes temporales
+ * 
+ * FLUJO DE TRABAJO:
+ * 1. Usuario ingresa título del anime
+ * 2. Selecciona calificación con slider de estrellas
+ * 3. Escribe comentario de la reseña
+ * 4. Opcionalmente captura/selecciona foto
+ * 5. Envía formulario para guardar en SQLite
+ * 6. Si SQLite falla, usa localStorage como fallback
+ * 7. Navega de vuelta a home con confirmación
+ * 
+ * INTEGRACIÓN CON SERVICIOS:
+ * - AuthService: Para obtener usuario actual y verificar autenticación
+ * - DatabaseService: Para operaciones SQLite (crear anime temporal, obtener usuario)
+ * - ReviewService: Para crear la reseña en la base de datos
+ * - CameraService: Para captura y selección de fotos
+ * 
+ * VALIDACIONES:
+ * - Formulario debe ser válido
+ * - Título del anime no puede estar vacío
+ * - Usuario debe estar autenticado
+ * - Calificación debe estar entre 1 y 5
+ * 
+ * MANEJO DE ERRORES:
+ * - Sistema robusto de fallback SQLite → localStorage
+ * - Mensajes informativos al usuario
+ * - Logs detallados para debugging
+ * 
+ * ===================================================================================
  */
 @Component({
   selector: 'app-add-review',
@@ -38,30 +74,45 @@ import {
   ],
 })
 export class AddReviewPage implements OnInit {
-  // === PROPIEDADES DEL FORMULARIO ===
+  /**
+   * =================================================================================
+   * PROPIEDADES DEL FORMULARIO Y ESTADO
+   * =================================================================================
+   */
   
-  // Título del anime a reseñar
+  // Título del anime a reseñar (campo obligatorio)
+  // El usuario debe ingresar el nombre del anime manualmente
   animeTitle: string = '';
   
-  // Foto seleccionada para la reseña
+  // Foto seleccionada para la reseña (opcional)
+  // Puede ser capturada con cámara o seleccionada de galería
   selectedPhoto: Photo | null = null;
   
-  // Calificación del anime (1-5)
+  // Calificación del anime (1-5 estrellas)
+  // Valor por defecto: 5 (máxima calificación)
   rating: number = 5;
   
-  // Comentario de la reseña
+  // Comentario de la reseña (campo obligatorio)
+  // El usuario debe escribir su opinión sobre el anime
   comment: string = '';
   
   // Estado de envío del formulario
+  // Previene múltiples envíos mientras se procesa
   submitting: boolean = false;
 
+  /**
+   * =================================================================================
+   * CONSTRUCTOR E INYECCIÓN DE DEPENDENCIAS
+   * =================================================================================
+   */
   constructor(
-    private navCtrl: NavController,
-    private reviewService: ReviewService,
-    private authService: AuthService,
-    private cameraService: CameraService,
-    private toastCtrl: ToastController,
-    private actionSheetCtrl: ActionSheetController
+    private navCtrl: NavController,           // Controlador de navegación
+    private reviewService: ReviewService,     // Servicio para gestión de reseñas
+    private authService: AuthService,          // Servicio de autenticación
+    private cameraService: CameraService,     // Servicio de cámara
+    private databaseService: DatabaseService, // Servicio de base de datos SQLite
+    private toastCtrl: ToastController,       // Controlador de mensajes toast
+    private actionSheetCtrl: ActionSheetController // Controlador de ActionSheet
   ) {}
 
   /**
@@ -168,24 +219,64 @@ export class AddReviewPage implements OnInit {
   }
 
   /**
-   * ENVIAR RESEÑA
+   * =================================================================================
+   * MÉTODO PRINCIPAL DE ENVÍO DE RESEÑA
+   * =================================================================================
    * 
-   * Esta función procesa el envío de la reseña:
-   * 1. Valida el formulario
-   * 2. Verifica autenticación del usuario
-   * 3. Crea los datos de la reseña
-   * 4. Guarda en localStorage por usuario
-   * 5. Navega de vuelta a home
+   * FUNCIÓN: onSubmit()
+   * 
+   * DESCRIPCIÓN:
+   * Este es el método principal que procesa el envío de una nueva reseña.
+   * Maneja todo el flujo desde la validación hasta el guardado en la base de datos.
+   * 
+   * FLUJO DE EJECUCIÓN DETALLADO:
+   * 1. VALIDACIÓN: Verificar que el formulario sea válido y tenga datos requeridos
+   * 2. AUTENTICACIÓN: Verificar que el usuario esté logueado
+   * 3. OBTENER USUARIO: Buscar datos completos del usuario en SQLite
+   * 4. CREAR ANIME: Insertar anime temporal en la base de datos
+   * 5. CREAR RESEÑA: Guardar la reseña usando ReviewService
+   * 6. FALLBACK: Si SQLite falla, usar localStorage como respaldo
+   * 7. NAVEGACIÓN: Retornar a home con mensaje de confirmación
+   * 
+   * PARÁMETROS:
+   * @param form - Objeto del formulario Angular con estado de validación
+   * 
+   * VALIDACIONES REALIZADAS:
+   * - Formulario debe ser válido (form.valid)
+   * - Título del anime no puede estar vacío (animeTitle.trim())
+   * - Usuario debe estar autenticado (authService.getCurrentUser())
+   * - Usuario debe existir en la base de datos
+   * 
+   * MANEJO DE ERRORES:
+   * - Error de validación: Muestra toast de advertencia
+   * - Error de autenticación: Redirige a login
+   * - Error de SQLite: Intenta fallback a localStorage
+   * - Error crítico: Muestra mensaje de error
+   * 
+   * EJEMPLO DE USO:
+   * En el template HTML:
+   * <form #reviewForm="ngForm" (ngSubmit)="onSubmit(reviewForm)">
+   * 
+   * =================================================================================
    */
   async onSubmit(form: any) {
+    /**
+     * PASO 1: VALIDACIÓN DEL FORMULARIO
+     * Verificar que el formulario sea válido y tenga datos requeridos
+     */
     if (!form.valid || !this.animeTitle.trim()) {
       this.showToast('Por favor completa todos los campos requeridos', 'warning');
       return;
     }
 
+    // Activar estado de envío para prevenir múltiples envíos
     this.submitting = true;
 
     try {
+      /**
+       * PASO 2: VERIFICAR AUTENTICACIÓN DEL USUARIO
+       * Obtener el usuario actualmente autenticado
+       */
       const currentUser = this.authService.getCurrentUser();
       if (!currentUser) {
         this.showToast('Usuario no autenticado', 'danger');
@@ -193,37 +284,92 @@ export class AddReviewPage implements OnInit {
         return;
       }
 
-      // Obtener el ID del usuario (asumiendo que el nombre de usuario es el ID)
-      const userId = parseInt(currentUser) || 1; // Fallback a 1 si no se puede parsear
+      /**
+       * PASO 3: OBTENER DATOS COMPLETOS DEL USUARIO DESDE SQLITE
+       * Buscar el usuario en la base de datos para obtener su ID
+       */
+      const userData = await this.databaseService.getUserByEmail(currentUser);
+      if (!userData) {
+        this.showToast('Usuario no encontrado en la base de datos', 'danger');
+        return;
+      }
 
-      // Crear un anime temporal con el título ingresado
+      const userId = userData.id;
+
+      /**
+       * PASO 4: CREAR ANIME TEMPORAL EN LA BASE DE DATOS
+       * Insertar el anime en la tabla 'animes' para mantener integridad referencial
+       */
       const tempAnimeId = Date.now(); // ID temporal basado en timestamp
+      
+      await this.databaseService.insertarAnimeTemporal(
+        tempAnimeId, 
+        this.animeTitle, 
+        'Anime agregado por usuario', 
+        this.selectedPhoto?.webviewPath || ''
+      );
 
+      /**
+       * PASO 5: CREAR LA RESEÑA USANDO EL SERVICIO DE RESEÑAS
+       * Usar ReviewService para crear la reseña con todos los datos
+       */
       const reviewData = {
         usuarioId: userId,
         animeId: tempAnimeId,
         calificacion: this.rating,
-        comentario: this.comment,
-        animeTitle: this.animeTitle, // Agregar el título del anime
-        photo: this.selectedPhoto, // Agregar la foto si existe
-        userEmail: currentUser // Agregar el email del usuario
+        comentario: this.comment
       };
 
-      // Guardar reseñas asociadas al usuario específico
-      const userReviews = JSON.parse(localStorage.getItem(`reviews_${currentUser}`) || '[]');
-      userReviews.push({
-        ...reviewData,
-        id: Date.now(),
-        fecha: new Date().toISOString()
-      });
-      localStorage.setItem(`reviews_${currentUser}`, JSON.stringify(userReviews));
+      const success = await this.reviewService.createReview(reviewData);
+      
+      if (success) {
+        this.showToast('Reseña agregada exitosamente en SQLite', 'success');
+        this.navCtrl.navigateBack('/home');
+      } else {
+        this.showToast('Error al guardar la reseña en SQLite', 'danger');
+      }
 
-      this.showToast('Reseña agregada exitosamente', 'success');
-      this.navCtrl.navigateBack('/home');
     } catch (error) {
-      console.error('Error guardando reseña:', error);
-      this.showToast('Error al guardar la reseña', 'danger');
+      console.error('❌ Error guardando reseña en SQLite:', error);
+      
+      /**
+       * PASO 6: FALLBACK A LOCALSTORAGE
+       * Si SQLite falla completamente, usar localStorage como respaldo
+       */
+      try {
+        console.log('🔄 Intentando guardar en localStorage como fallback');
+        const currentUser = this.authService.getCurrentUser();
+        const userId = parseInt(currentUser || '1') || 1;
+        const tempAnimeId = Date.now();
+
+        const reviewData = {
+          usuarioId: userId,
+          animeId: tempAnimeId,
+          calificacion: this.rating,
+          comentario: this.comment,
+          animeTitle: this.animeTitle,
+          photo: this.selectedPhoto,
+          userEmail: currentUser
+        };
+
+        // Guardar en localStorage usando el patrón existente
+        const userReviews = JSON.parse(localStorage.getItem(`reviews_${currentUser}`) || '[]');
+        userReviews.push({
+          ...reviewData,
+          id: Date.now(),
+          fecha: new Date().toISOString()
+        });
+        localStorage.setItem(`reviews_${currentUser}`, JSON.stringify(userReviews));
+
+        this.showToast('Reseña guardada en localStorage (fallback)', 'success');
+        this.navCtrl.navigateBack('/home');
+        
+      } catch (fallbackError) {
+        console.error('❌ Error en fallback localStorage:', fallbackError);
+        this.showToast('Error al guardar la reseña', 'danger');
+      }
     } finally {
+      // Desactivar estado de envío
       this.submitting = false;
     }
   }

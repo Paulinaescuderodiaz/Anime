@@ -8,6 +8,7 @@ import { AnimeApiService, AnimeData } from '../services/anime-api.service';
 import { CameraService, Photo } from '../services/camera.service';
 import { DatabaseService } from '../services/database';
 import { FallbackDataService } from '../services/fallback-data.service';
+import { ReviewService } from '../services/review.service';
 import {
   IonChip, IonButton, IonIcon, IonCard, IonButtons,
   IonContent, IonHeader, IonMenu, IonMenuButton,
@@ -16,15 +17,50 @@ import {
 } from '@ionic/angular/standalone';
 
 /**
- * PÁGINA PRINCIPAL DE LA APLICACIÓN
+ * ===================================================================================
+ * PÁGINA PRINCIPAL DE LA APLICACIÓN - HomePage
+ * ===================================================================================
  * 
- * Esta es la página principal que muestra:
- * - Lista de animes populares desde la API externa
- * - Funcionalidad de búsqueda de animes
+ * DESCRIPCIÓN GENERAL:
+ * Esta es la página principal de la aplicación que integra todas las funcionalidades:
+ * - Lista de animes populares desde APIs externas
+ * - Sistema de búsqueda de animes
  * - Galería de fotos del usuario (cámara)
  * - Reseñas personalizadas del usuario
  * - Reseñas de otros usuarios
  * - Navegación a otras secciones de la app
+ * 
+ * FUNCIONALIDADES PRINCIPALES:
+ * 1. CARGA DE ANIMES: Desde múltiples APIs (AniList, Jikan) con fallback
+ * 2. BÚSQUEDA: Sistema de búsqueda en tiempo real
+ * 3. CÁMARA: Captura y selección de fotos
+ * 4. RESEÑAS: Gestión completa de reseñas del usuario
+ * 5. NAVEGACIÓN: Acceso a todas las secciones de la app
+ * 6. REFRESH: Pull-to-refresh para actualizar datos
+ * 
+ * FLUJO DE TRABAJO:
+ * 1. Al cargar: Obtener usuario, cargar animes, cargar fotos, cargar reseñas
+ * 2. Mostrar animes populares con información completa
+ * 3. Permitir búsqueda de animes específicos
+ * 4. Mostrar galería de fotos del usuario
+ * 5. Mostrar reseñas del usuario y de otros usuarios
+ * 6. Permitir navegación a detalles y otras páginas
+ * 
+ * INTEGRACIÓN CON SERVICIOS:
+ * - AuthService: Para gestión de usuarios
+ * - AnimeApiService: Para datos de animes desde APIs externas
+ * - CameraService: Para funcionalidad de cámara
+ * - DatabaseService: Para operaciones SQLite
+ * - ReviewService: Para gestión de reseñas
+ * - FallbackDataService: Para datos de ejemplo
+ * 
+ * MANEJO DE DATOS:
+ * - Prioriza APIs externas para animes
+ * - Usa SQLite para reseñas con fallback a localStorage
+ * - Sistema robusto de fallback en caso de errores
+ * - Pull-to-refresh para actualizar todos los datos
+ * 
+ * ===================================================================================
  */
 @Component({
   selector: 'app-home',
@@ -72,6 +108,7 @@ export class HomePage implements OnInit {
     private cameraService: CameraService,
     private databaseService: DatabaseService,
     private fallbackDataService: FallbackDataService,
+    private reviewService: ReviewService,
     private toastCtrl: ToastController,
     private actionSheetCtrl: ActionSheetController,
     private alertCtrl: AlertController
@@ -442,21 +479,35 @@ export class HomePage implements OnInit {
         return;
       }
       
-      // Obtener reseñas del usuario actual
+      // Intentar eliminar desde SQLite primero
+      if (review.id && typeof review.id === 'number') {
+        const success = await this.reviewService.deleteReview(review.id);
+        if (success) {
+          // Recargar las reseñas desde SQLite
+          await this.loadCustomReviews();
+          
+          const toast = await this.toastCtrl.create({
+            message: 'Reseña eliminada exitosamente desde SQLite',
+            duration: 2000,
+            color: 'success',
+            position: 'bottom'
+          });
+          await toast.present();
+          return;
+        }
+      }
+      
+      // Fallback a localStorage si SQLite falla o no tiene ID
+      console.log('Fallback a localStorage para eliminar reseña');
       const reviews = JSON.parse(localStorage.getItem(`reviews_${currentUser}`) || '[]');
-      
-      // Filtrar la reseña a eliminar
       const updatedReviews = reviews.filter((r: any) => r.id !== review.id);
-      
-      // Actualizar localStorage del usuario
       localStorage.setItem(`reviews_${currentUser}`, JSON.stringify(updatedReviews));
       
-      // Recargar las reseñas en la página
-      this.loadCustomReviews();
+      // Recargar las reseñas
+      await this.loadCustomReviews();
       
-      // Mostrar mensaje de éxito
       const toast = await this.toastCtrl.create({
-        message: 'Reseña eliminada exitosamente',
+        message: 'Reseña eliminada exitosamente desde localStorage',
         duration: 2000,
         color: 'success',
         position: 'bottom'
@@ -478,10 +529,10 @@ export class HomePage implements OnInit {
   /**
    * CARGAR RESEÑAS PERSONALIZADAS DEL USUARIO
    * 
-   * Carga las reseñas creadas por el usuario actual desde localStorage.
-   * Las ordena por fecha (más recientes primero) y limita a 10 reseñas.
+   * Carga las reseñas creadas por el usuario actual desde SQLite.
+   * Si SQLite falla, usa localStorage como fallback.
    */
-  loadCustomReviews() {
+  async loadCustomReviews() {
     try {
       const currentUser = this.authService.getCurrentUser();
       if (!currentUser) {
@@ -489,16 +540,35 @@ export class HomePage implements OnInit {
         return;
       }
       
+      // Intentar cargar desde SQLite
+      const userData = await this.databaseService.getUserByEmail(currentUser);
+      if (userData) {
+        const reviews = await this.reviewService.getReviewsByUser(userData.id);
+        this.customReviews = reviews.slice(0, 10); // Limitar a 10 reseñas máximo
+        console.log('Reseñas cargadas desde SQLite:', this.customReviews.length);
+        return;
+      }
+      
+      // Fallback a localStorage si SQLite falla
+      console.log('Fallback a localStorage para reseñas');
       const reviews = JSON.parse(localStorage.getItem(`reviews_${currentUser}`) || '[]');
-      // Ordenar por fecha y limitar a 10 reseñas máximo
       this.customReviews = reviews
         .sort((a: any, b: any) => 
           new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
         )
-        .slice(0, 10); // Limitar a 10 reseñas máximo
+        .slice(0, 10);
     } catch (error) {
       console.error('Error cargando reseñas personalizadas:', error);
-      this.customReviews = [];
+      
+      // Fallback a localStorage en caso de error
+      try {
+        const currentUser = this.authService.getCurrentUser();
+        const reviews = JSON.parse(localStorage.getItem(`reviews_${currentUser}`) || '[]');
+        this.customReviews = reviews.slice(0, 10);
+      } catch (fallbackError) {
+        console.error('Error en fallback localStorage:', fallbackError);
+        this.customReviews = [];
+      }
     }
   }
 
