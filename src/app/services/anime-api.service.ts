@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, of } from 'rxjs';
 import { catchError, timeout, retry, switchMap } from 'rxjs/operators';
 import { FallbackDataService } from './fallback-data.service';
+import { ConnectivityService } from './connectivity.service';
 
 /**
  * INTERFAZ PARA ANIME MEJORADA
@@ -47,7 +48,8 @@ export class AnimeApiService {
 
   constructor(
     private http: HttpClient,
-    private fallbackDataService: FallbackDataService
+    private fallbackDataService: FallbackDataService,
+    private connectivityService: ConnectivityService
   ) {}
 
   /**
@@ -55,12 +57,23 @@ export class AnimeApiService {
    * 
    * Intenta obtener animes populares de múltiples fuentes.
    */
-  getTopAnimes(): Observable<AnimeData[]> {
-    return this.tryMultipleSources([
+  async getTopAnimes(): Promise<AnimeData[]> {
+    // Verificar conectividad primero
+    const connectivityResult = await this.connectivityService.testAllConnectivity();
+    
+    if (!connectivityResult.isConnected) {
+      console.warn('Sin conectividad detectada, usando datos de ejemplo');
+      return this.fallbackDataService.getSampleAnimes();
+    }
+
+    // Intentar obtener datos de APIs disponibles
+    const result = await this.tryMultipleSources([
       () => this.getAnimesFromAniList(),
       () => this.getAnimesFromJikan(),
       () => of(this.fallbackDataService.getSampleAnimes())
-    ]);
+    ]).toPromise();
+    
+    return result || this.fallbackDataService.getSampleAnimes();
   }
 
   /**
@@ -68,12 +81,23 @@ export class AnimeApiService {
    * 
    * Busca animes en múltiples fuentes.
    */
-  searchAnimes(query: string): Observable<AnimeData[]> {
-    return this.tryMultipleSources([
+  async searchAnimes(query: string): Promise<AnimeData[]> {
+    // Verificar conectividad primero
+    const connectivityResult = await this.connectivityService.testAllConnectivity();
+    
+    if (!connectivityResult.isConnected) {
+      console.warn('Sin conectividad detectada, usando búsqueda en datos de ejemplo');
+      return this.fallbackDataService.searchSampleAnimes(query);
+    }
+
+    // Intentar buscar en APIs disponibles
+    const result = await this.tryMultipleSources([
       () => this.searchAnimesFromAniList(query),
       () => this.searchAnimesFromJikan(query),
       () => of(this.fallbackDataService.searchSampleAnimes(query))
-    ]);
+    ]).toPromise();
+    
+    return result || this.fallbackDataService.searchSampleAnimes(query);
   }
 
   /**

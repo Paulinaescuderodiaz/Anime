@@ -15,6 +15,7 @@ import {
   IonTitle, IonToolbar, IonAvatar, IonLabel, IonSearchbar,
   IonSpinner, IonRefresher, IonRefresherContent
 } from '@ionic/angular/standalone';
+import { ConnectivityStatusComponent } from '../components/connectivity-status.component';
 
 /**
  * ===================================================================================
@@ -73,7 +74,8 @@ import {
     IonChip, IonButton, IonIcon, IonCard, IonButtons,
     IonContent, IonHeader, IonMenu, IonMenuButton,
     IonTitle, IonToolbar, IonAvatar, IonLabel, IonSearchbar,
-    IonSpinner, IonRefresher, IonRefresherContent
+    IonSpinner, IonRefresher, IonRefresherContent,
+    ConnectivityStatusComponent
   ],
 })
 export class HomePage implements OnInit {
@@ -148,7 +150,7 @@ export class HomePage implements OnInit {
       console.log('Cargando animes desde múltiples fuentes...');
       
       // Usar el nuevo servicio que intenta múltiples APIs
-      const animes = await this.animeApiService.getTopAnimes().toPromise();
+      const animes = await this.animeApiService.getTopAnimes();
       console.log('Animes obtenidos:', animes);
       
       // Validar que animes no sea undefined y limitar a 10 animes
@@ -210,7 +212,7 @@ export class HomePage implements OnInit {
       console.log('Buscando animes:', this.searchQuery);
       
       // Usar el nuevo servicio de búsqueda
-      const animes = await this.animeApiService.searchAnimes(this.searchQuery).toPromise();
+      const animes = await this.animeApiService.searchAnimes(this.searchQuery);
       console.log('Resultados de búsqueda:', animes);
       
       // Validar que animes no sea undefined y limitar a 10 animes

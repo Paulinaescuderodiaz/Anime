@@ -1,0 +1,61 @@
+<ion-card class="connectivity-card" *ngIf="connectivityResult">
+  <ion-card-header>
+    <ion-card-title>
+      <ion-icon [name]="getStatusIcon()" [color]="getStatusColor()"></ion-icon>
+      Estado de Conectividad
+    </ion-card-title>
+  </ion-card-header>
+  
+  <ion-card-content>
+    <div class="status-info">
+      <p class="status-message">{{ getStatusMessage() }}</p>
+      
+      <div class="last-checked" *ngIf="lastChecked">
+        <ion-icon name="time" size="small"></ion-icon>
+        <span>Última verificación: {{ lastChecked | date:'short' }}</span>
+      </div>
+    </div>
+
+    <div class="details-section" *ngIf="showDetails && connectivityResult.details">
+      <h4>Detalles de APIs:</h4>
+      <div class="api-list">
+        <div 
+          *ngFor="let api of connectivityResult.details" 
+          class="api-item">
+          <ion-icon 
+            [name]="api.isAvailable ? 'checkmark-circle' : 'close-circle'"
+            [color]="api.isAvailable ? 'success' : 'danger'">
+          </ion-icon>
+          <span class="api-name">{{ api.name }}</span>
+          <ion-chip 
+            [color]="api.isAvailable ? 'success' : 'danger'" 
+            size="small">
+            {{ api.isAvailable ? 'Disponible' : 'No disponible' }}
+          </ion-chip>
+          <span class="response-time" *ngIf="api.responseTime">
+            {{ formatTime(api.responseTime) }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <ion-button 
+        fill="outline" 
+        size="small"
+        (click)="checkConnectivity()"
+        [disabled]="isLoading">
+        <ion-icon name="refresh" slot="start"></ion-icon>
+        {{ isLoading ? 'Verificando...' : 'Verificar' }}
+      </ion-button>
+      
+      <ion-button 
+        fill="clear" 
+        size="small"
+        (click)="showDetails = !showDetails">
+        <ion-icon [name]="showDetails ? 'chevron-up' : 'chevron-down'" slot="start"></ion-icon>
+        {{ showDetails ? 'Ocultar' : 'Detalles' }}
+      </ion-button>
+    </div>
+  </ion-card-content>
+</ion-card>

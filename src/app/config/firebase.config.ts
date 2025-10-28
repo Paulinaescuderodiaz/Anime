@@ -20,11 +20,28 @@ const firebaseConfig = {
   measurementId: "G-D15Y6QBL21"
 };
 
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// Inicializar Firebase con manejo de errores
+let app;
+let analytics;
+let auth;
+let db;
+
+try {
+  app = initializeApp(firebaseConfig);
+  analytics = getAnalytics(app);
+  auth = getAuth(app);
+  db = getFirestore(app);
+  
+  console.log('✅ Firebase inicializado correctamente');
+} catch (error) {
+  console.error('❌ Error inicializando Firebase:', error);
+  // Crear objetos mock para evitar errores
+  app = null;
+  analytics = null;
+  auth = null;
+  db = null;
+}
 
 // Exportar servicios de Firebase
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+export { auth, db };
 export default app;
