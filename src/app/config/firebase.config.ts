@@ -1,8 +1,8 @@
 
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { getAuth, Auth } from 'firebase/auth';
+import { getFirestore, Firestore } from 'firebase/firestore';
+import { initializeApp, FirebaseApp } from "firebase/app";
+import { getAnalytics, Analytics } from "firebase/analytics";
 
 /**
  * CONFIGURACIÓN DE FIREBASE
@@ -21,10 +21,10 @@ const firebaseConfig = {
 };
 
 // Inicializar Firebase con manejo de errores
-let app;
-let analytics;
-let auth;
-let db;
+let app: FirebaseApp | null;
+let analytics: Analytics | null;
+let auth: Auth | null;
+let db: Firestore | null;
 
 try {
   app = initializeApp(firebaseConfig);

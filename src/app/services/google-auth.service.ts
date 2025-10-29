@@ -24,9 +24,11 @@ export class GoogleAuthService {
 
   constructor() {
     // Escuchar cambios en el estado de autenticación
-    onAuthStateChanged(auth, (user) => {
-      this.userSubject.next(user);
-    });
+    if (auth) {
+      onAuthStateChanged(auth, (user) => {
+        this.userSubject.next(user);
+      });
+    }
   }
 
   /**
@@ -36,6 +38,10 @@ export class GoogleAuthService {
    * @returns Promise<User> - Usuario autenticado
    */
   async signInWithGoogle(): Promise<User> {
+    if (!auth) {
+      throw new Error('Firebase Auth no está inicializado');
+    }
+    
     try {
       const provider = new GoogleAuthProvider();
       provider.addScope('email');
@@ -55,6 +61,10 @@ export class GoogleAuthService {
    * Cierra la sesión del usuario actual.
    */
   async signOut(): Promise<void> {
+    if (!auth) {
+      throw new Error('Firebase Auth no está inicializado');
+    }
+    
     try {
       await signOut(auth);
     } catch (error) {
@@ -69,6 +79,9 @@ export class GoogleAuthService {
    * @returns User | null - Usuario actual o null si no está autenticado
    */
   getCurrentUser(): User | null {
+    if (!auth) {
+      return null;
+    }
     return auth.currentUser;
   }
 
